@@ -1032,31 +1032,12 @@
                                 "owner": "root",
                                 "group": "root",
                                 "authentication": "S3AccessClusterMember"
-                            },
-                            "/tmp/banner_message" : {
-                                "source" : {
-                                    "Fn::Sub" : [
-                                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}scripts/banner_message",
-                                        {
-                                            "QSS3Region" : {
-                                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
-                                            }
-                                        }
-                                    ]                                     
-                                },
-                                "mode": "000644",
-                                "owner": "root",
-                                "group": "root",
-                                "authentication": "S3AccessClusterMember"
-                            }                                                
+                            }                        
                         },
                         "commands" : {
                             "datasunrise-bootstrap-start" : {
                                 "command" :  "./tmp/datasunrise_bootstrap.sh"
-                            },
-                            "datasunrise-bootstrap-clean" : {
-                                "command" :  "rm -f /tmp/datasunrise_bootstrap.sh"
-                            }                                 
+                            }                                                           
                         }                                
                     }
                 }
