@@ -935,11 +935,18 @@
                 "SecurityGroupIngress" : [
                     {
                         "IpProtocol" : "tcp",
-                        "FromPort" : 22,
-                        "ToPort" : 22,
-                        "CidrIp" : { "Ref" : "VPCRemoteAccessCIDR" },
-                        "Description" : "Allow SSH from Remote Access CIDR"
-                    },
+                        "FromPort" : { "Ref" : "RedshiftClusterPort" },
+                        "ToPort" : { "Ref" : "RedshiftClusterPort" },
+                        "CidrIp" : { "Ref" : "VPCPrivateSubnet1CIDR" },
+                        "Description" : "Allow access to Redshift Cluster from Private Subnet 1"
+                    },                                            
+                    {
+                        "IpProtocol" : "tcp",
+                        "FromPort" : { "Ref" : "RedshiftClusterPort" },
+                        "ToPort" : { "Ref" : "RedshiftClusterPort" },
+                        "CidrIp" : { "Ref" : "VPCPrivateSubnet2CIDR" },
+                        "Description" : "Allow access to Redshift Cluster from Private Subnet 2"
+                    },                                            
                     {
                         "IpProtocol" : "tcp",
                         "FromPort" : 11000,
@@ -1094,13 +1101,13 @@
                 ] ] } }
             }
         },
-        "dsLoadBalancerInternal" : {
+        "dsLoadBalancerPublic" : {
             "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
             "Properties": {
-                "Scheme" : "internal",
+                "Scheme" : "internet-facing",
                 "LoadBalancerName" : { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" }, "-load-balancer" ] ] },
                 "SecurityGroups" : [{ "Ref" : "dsSecurityGroupPrivateNetwork" }],
-                "Subnets" : [ { "Fn::GetAtt": [ "awsVPC", "Outputs.PrivateSubnet1AID" ] }, { "Fn::GetAtt": [ "awsVPC", "Outputs.PrivateSubnet2AID" ] } ],
+                "Subnets" : [ { "Fn::GetAtt": [ "awsVPC", "Outputs.PublicSubnet1ID" ] }, { "Fn::GetAtt": [ "awsVPC", "Outputs.PublicSubnet2ID" ] } ],
                 "CrossZone" : "true",
                 "ConnectionSettings" : {
                     "IdleTimeout" : "120"
@@ -1130,7 +1137,7 @@
         },
         "dsAutoScalingGroup": {
             "Type" : "AWS::AutoScaling::AutoScalingGroup",
-            "DependsOn": [ "dsLaunchConfiguration", "dsLoadBalancerInternal" ],
+            "DependsOn": [ "dsLaunchConfiguration", "dsLoadBalancerPublic" ],
             "Properties" : {
                 "AutoScalingGroupName" : { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" }, "-autoscaling-group" ] ] },
                 "LaunchConfigurationName" : { "Ref" : "dsLaunchConfiguration" },
@@ -1165,10 +1172,10 @@
     },
     "Outputs" : {
         "DatasunriseConsoleURL" : {
-            "Value" : { "Fn::Join" : [ "", [ "https://", { "Fn::GetAtt" : [ "dsLoadBalancerInternal", "DNSName" ] }, ":11000/v2" ] ] }
+            "Value" : { "Fn::Join" : [ "", [ "https://", { "Fn::GetAtt" : [ "dsLoadBalancerPublic", "DNSName" ] }, ":11000/v2" ] ] }
         },
         "ProxyEndpoint" : {
-            "Value" : { "Fn::GetAtt" : [ "dsLoadBalancerInternal", "DNSName" ] }
+            "Value" : { "Fn::GetAtt" : [ "dsLoadBalancerPublic", "DNSName" ] }
         },
         "RedShiftEndpoitHostname" : {
             "Value" : { "Fn::Select" : [ "0", { "Fn::Split": [":", {"Fn::GetAtt": [ "awsRedshift", "Outputs.RedshiftClusterEndpoint" ] }]}] }
