@@ -722,7 +722,7 @@
         },
         "awsRedshift" : {
             "Type" : "AWS::CloudFormation::Stack",
-            "DependsOn" : [ "awsVPC" , "awsLinuxBastion" ],
+            "DependsOn" : [ "awsVPC" ],
                 "Properties" : {
                     "TemplateURL" : {
                         "Fn::Sub" : [
@@ -791,7 +791,7 @@
                     "SecretStringTemplate" : { "Fn::Join" : [ "" , [ "{\"username\":\"" , { "Ref" : "DSAuditDBUserName" } , "\"}" ] ] },
                     "GenerateStringKey" : "password",
                     "PasswordLength" : 32,
-                    "ExcludeCharacters" : "\"@/\\"
+                    "ExcludePunctuation" : true
                 }
             }
         },
@@ -829,7 +829,7 @@
                     "SecretStringTemplate" : { "Fn::Join" : [ "" , [ "{\"username\":\"" , { "Ref" : "DSDictionaryDBUserName" } , "\"}" ] ] },
                     "GenerateStringKey" : "password",
                     "PasswordLength" : 32,
-                    "ExcludeCharacters" : "\"@/\\"
+                    "ExcludePunctuation" : true
                 }
             }
         },    
@@ -860,7 +860,7 @@
         },            
         "dsSecurityGroupPrivateNetwork" : {
            "Type" : "AWS::EC2::SecurityGroup",
-           "DependsOn" : [ "awsVPC" , "dsSecurityGroupPublicNetwork" ],
+           "DependsOn" : [ "awsLinuxBastion" ],
            "Properties" : {
                "GroupDescription" : "DataSunrise Security Group (Private Network)",
                "VpcId" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] },
@@ -869,70 +869,37 @@
                         "IpProtocol" : "tcp",
                         "FromPort" : 22,
                         "ToPort" : 22,
-                        "CidrIp" : { "Ref" : "VPCPublicSubnet1CIDR" },
-                        "Description" : "Allow SSH from Public Subnet 1 CIDR"
-                    },
-                    {
-                        "IpProtocol" : "tcp",
-                        "FromPort" : 22,
-                        "ToPort" : 22,
-                        "CidrIp" : { "Ref" : "VPCPublicSubnet2CIDR" },
-                        "Description" : "Allow SSH from Public Subnet 2 CIDR"
+                        "SourceSecurityGroupId" : { "Fn::GetAtt": [ "awsLinuxBastion", "Outputs.BastionSecurityGroupID" ] },     
+                        "Description" : "Allow SSH from Linux Bastion Security Group"
                     },
                     {
                         "IpProtocol" : "tcp",
                         "FromPort" : 11000,
                         "ToPort" : 11000,
-                        "CidrIp" : { "Ref" : "VPCPublicSubnet1CIDR" },
-                        "Description" : "Allow https (11000) from Public Subnet 1 CIDR"
+                        "SourceSecurityGroupId" : { "Fn::GetAtt": [ "dsSecurityGroupPublicLoadBalancer", "GroupId" ] },     
+                        "Description" : "Allow Web-based access from Public Load Balancer Security Group"
                     },
                     {
                         "IpProtocol" : "tcp",
-                        "FromPort" : 11000,
-                        "ToPort" : 11000,
-                        "CidrIp" : { "Ref" : "VPCPublicSubnet2CIDR" },
-                        "Description" : "Allow https (11000) from Public Subnet 2 CIDR"
-                    },                   
+                        "FromPort" : { "Ref" : "RedshiftClusterPort" },
+                        "ToPort" : { "Ref" : "RedshiftClusterPort" },
+                        "SourceSecurityGroupId" : { "Fn::GetAtt": [ "dsSecurityGroupPublicLoadBalancer", "GroupId" ] },     
+                        "Description" : "Allow access to Redshift Cluster from Public Load Balancer Security Group"
+                    },  
                     {
                         "IpProtocol" : "tcp",
-                        "FromPort" : 11000,
-                        "ToPort" : 11000,
+                        "FromPort" : 5432,
+                        "ToPort" : 5432,
                         "CidrIp" : { "Ref" : "VPCPrivateSubnet1CIDR" },
-                        "Description" : "Allow https (11000) from Private Subnet 1 CIDR"
-                    },
+                        "Description" : "Allow access to Audit and Dictionary PostgreSQL RDS Instances from Private Subnet 1"
+                    },   
                     {
                         "IpProtocol" : "tcp",
-                        "FromPort" : 11000,
-                        "ToPort" : 11000,
+                        "FromPort" : 5432,
+                        "ToPort" : 5432,
                         "CidrIp" : { "Ref" : "VPCPrivateSubnet2CIDR" },
-                        "Description" : "Allow https (11000) from Private Subnet 2 CIDR"
-                    },                            
-                    {
-                        "IpProtocol" : "tcp",
-                        "FromPort" : 11000,
-                        "ToPort" : 11000,
-                        "SourceSecurityGroupId" : { "Fn::GetAtt": [ "dsSecurityGroupPublicNetwork", "GroupId" ] },     
-                        "Description" : "Allow Web-based access from Public Security Group"
-                    }       
-               ],
-               "SecurityGroupEgress" : [
-                    {
-                        "IpProtocol" : "tcp",
-                        "FromPort" : 0,
-                        "ToPort" : 65535,
-                        "CidrIp" : "0.0.0.0/0",
-                        "Description" : "Allow all outbound traffic"
-                    }         
-               ]
-           }
-        },
-        "dsSecurityGroupPublicNetwork" : {
-            "Type" : "AWS::EC2::SecurityGroup",
-            "DependsOn" : [ "awsVPC" ],
-            "Properties" : {
-                "GroupDescription" : "DataSunrise Security Group (Public Network)",
-                "VpcId" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] },
-                "SecurityGroupIngress" : [
+                        "Description" : "Allow access to Audit and Dictionary PostgreSQL RDS Instances from Private Subnet 2"
+                    },                       
                     {
                         "IpProtocol" : "tcp",
                         "FromPort" : { "Ref" : "RedshiftClusterPort" },
@@ -946,15 +913,70 @@
                         "ToPort" : { "Ref" : "RedshiftClusterPort" },
                         "CidrIp" : { "Ref" : "VPCPrivateSubnet2CIDR" },
                         "Description" : "Allow access to Redshift Cluster from Private Subnet 2"
-                    },                                            
+                    },                      
+                    {
+                        "IpProtocol" : "tcp",
+                        "FromPort" : 11000,
+                        "ToPort" : 11000,
+                        "CidrIp" : { "Ref" : "VPCPrivateSubnet1CIDR" },
+                        "Description" : "Allow https (11000) from Private Subnet 1 CIDR"
+                    },
+                    {
+                        "IpProtocol" : "tcp",
+                        "FromPort" : 11000,
+                        "ToPort" : 11000,
+                        "CidrIp" : { "Ref" : "VPCPrivateSubnet2CIDR" },
+                        "Description" : "Allow https (11000) from Private Subnet 2 CIDR"
+                    }       
+               ],
+               "SecurityGroupEgress" : [
+                    {
+                        "IpProtocol" : "tcp",
+                        "FromPort" : 0,
+                        "ToPort" : 65535,
+                        "CidrIp" : "0.0.0.0/0",
+                        "Description" : "Allow all outbound traffic"
+                    }         
+               ]
+           }
+        },
+        "dsSecurityGroupPublicLoadBalancer" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "DependsOn" : [ "awsVPC" ],
+            "Properties" : {
+                "GroupDescription" : "DataSunrise Security Group (Public Load Balancer)",
+                "VpcId" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] },
+                "SecurityGroupIngress" : [
                     {
                         "IpProtocol" : "tcp",
                         "FromPort" : 11000,
                         "ToPort" : 11000,
                         "CidrIp" : { "Ref" : "VPCRemoteAccessCIDR" },
                         "Description" : "Allow https (11000) from Remote Access CIDR"
-                    }                                                           
+                    },                                                                                                   
+                    {
+                        "IpProtocol" : "tcp",
+                        "FromPort" : { "Ref" : "RedshiftClusterPort" },
+                        "ToPort" : { "Ref" : "RedshiftClusterPort" },
+                        "CidrIp" : { "Ref" : "VPCPrivateSubnet1CIDR" },
+                        "Description" : "Allow access to Redshift Cluster from Private Subnet 1"
+                    },                                            
+                    {
+                        "IpProtocol" : "tcp",
+                        "FromPort" : { "Ref" : "RedshiftClusterPort" },
+                        "ToPort" : { "Ref" : "RedshiftClusterPort" },
+                        "CidrIp" : { "Ref" : "VPCPrivateSubnet2CIDR" },
+                        "Description" : "Allow access to Redshift Cluster from Private Subnet 2"
+                    }
                 ]
+            }
+        },
+        "dsSecurityGroupPublicNetwork" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "DependsOn" : [ "awsVPC" ],
+            "Properties" : {
+                "GroupDescription" : "DataSunrise Security Group (Public Network)",
+                "VpcId" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] }
             }
         },
         "dsClusterMemberRole" : {
@@ -1013,7 +1035,7 @@
         },
         "dsLaunchConfiguration" : {
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
-            "DependsOn" : [ "dsClusterMemberRole" , "dsDBDictionary" ],
+            "DependsOn" : [ "dsClusterMemberRole" ],
             "Metadata" : {
                 "AWS::CloudFormation::Authentication" : {
                     "S3AccessClusterMember" : {
@@ -1106,7 +1128,7 @@
             "Properties": {
                 "Scheme" : "internet-facing",
                 "LoadBalancerName" : { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" }, "-load-balancer" ] ] },
-                "SecurityGroups" : [{ "Ref" : "dsSecurityGroupPrivateNetwork" }],
+                "SecurityGroups" : [{ "Ref" : "dsSecurityGroupPublicLoadBalancer" }],
                 "Subnets" : [ { "Fn::GetAtt": [ "awsVPC", "Outputs.PublicSubnet1ID" ] }, { "Fn::GetAtt": [ "awsVPC", "Outputs.PublicSubnet2ID" ] } ],
                 "CrossZone" : "true",
                 "ConnectionSettings" : {
@@ -1137,7 +1159,7 @@
         },
         "dsAutoScalingGroup": {
             "Type" : "AWS::AutoScaling::AutoScalingGroup",
-            "DependsOn": [ "dsLaunchConfiguration", "dsLoadBalancerPublic" ],
+            "DependsOn": [ "dsLaunchConfiguration" , "dsLoadBalancerPublic" ],
             "Properties" : {
                 "AutoScalingGroupName" : { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" }, "-autoscaling-group" ] ] },
                 "LaunchConfigurationName" : { "Ref" : "dsLaunchConfiguration" },
@@ -1159,7 +1181,7 @@
             "Type" : "AWS::AutoScaling::ScalingPolicy",
             "Properties" : {
                 "AutoScalingGroupName" : { "Ref" : "dsAutoScalingGroup" },
-                "EstimatedInstanceWarmup" : "90",
+                "EstimatedInstanceWarmup" : "300",
                 "PolicyType" : "TargetTrackingScaling",
                 "TargetTrackingConfiguration": {
                     "PredefinedMetricSpecification": {

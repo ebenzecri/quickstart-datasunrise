@@ -198,7 +198,7 @@ installer_preinstall() {
 ###[ Main Script ]###
 installer_preinstall
 aws_cli_configure
-aws_secrets_retrieve
 installer_download
+aws_secrets_retrieve
 installer_install
 installer_postinstall
