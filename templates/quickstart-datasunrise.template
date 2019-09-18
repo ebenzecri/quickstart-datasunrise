@@ -281,7 +281,7 @@
             "Description" : "DataSunrise Administrator password",
             "MaxLength" : "41",
             "MinLength" : "8",
-            "NoEcho" : "true",
+            "NoEcho" : true,
             "Type" : "String"
         },
         "DSAuditDBClass" : {
@@ -436,7 +436,7 @@
             "Description": "User password",
             "MaxLength" : "41",
             "MinLength" : "6",
-            "NoEcho" : "true",
+            "NoEcho" : true,
             "Type" : "String"
         },                        
         "LinuxBastionHostsNumber" : {
@@ -484,7 +484,7 @@
             "Type" : "String"
         },
         "VPCRemoteAccessCIDR" : {
-            "AllowedPattern" : "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$",
+            "AllowedPattern" : "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$",
             "ConstraintDescription" : "CIDR block parameter must be in the form x.x.x.x/x",
             "Description" : "Allowed CIDR block for external access. If you want to allow external access from everywhere use 0.0.0.0/0",
             "Type" : "String"
@@ -556,7 +556,7 @@
             "Description" : "User password associated to the master user account for the cluster to be deployed",
             "MinLength" : "8",
             "MaxLength" : "64",
-            "NoEcho" : "true",
+            "NoEcho" : true,
             "Type" : "String"
         },
         "RedshiftMaximumConcurrentCluster" : {
@@ -683,7 +683,6 @@
         },
         "awsLinuxBastion" : {
             "Type" : "AWS::CloudFormation::Stack",
-            "DependsOn" : [ "awsVPC" ],
                 "Properties" : {
                     "TemplateURL" : {
                         "Fn::Sub" : [
@@ -723,7 +722,6 @@
         },
         "awsRedshift" : {
             "Type" : "AWS::CloudFormation::Stack",
-            "DependsOn" : [ "awsVPC" ],
                 "Properties" : {
                     "TemplateURL" : {
                         "Fn::Sub" : [
@@ -768,7 +766,6 @@
         },
         "dsDBAudit" : {
             "Type" : "AWS::RDS::DBInstance",
-            "DependsOn" : [ "dsDBSubnetGroup" , "dsDBAuditSecret" ],
             "Properties" : {
                  "DBInstanceIdentifier" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-audit" ] ] },
                  "DBName" : { "Ref" : "DSAuditDBName" },
@@ -806,7 +803,6 @@
         },
         "dsDBDictionary" : {
             "Type" : "AWS::RDS::DBInstance",
-            "DependsOn" : [ "dsDBSubnetGroup" , "dsDBDictionarySecret" ],
             "Properties" : {
                  "DBInstanceIdentifier" : { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" } , "-dictionary" ] ] },
                  "DBName" : { "Ref" : "DSDictionaryDBName" },
@@ -844,7 +840,6 @@
         },
         "dsDBSubnetGroup" : {
             "Type" : "AWS::RDS::DBSubnetGroup",
-            "DependsOn" : [ "awsVPC" ],
             "Properties" : {
                 "DBSubnetGroupDescription" : "RDS Subnet Group for DataSunrise (Audit + Dictionary)",
                 "DBSubnetGroupName" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-db-subnet-group" ] ] },
@@ -861,7 +856,6 @@
         },            
         "dsSecurityGroupPrivateNetwork" : {
            "Type" : "AWS::EC2::SecurityGroup",
-           "DependsOn" : [ "awsLinuxBastion" ],
            "Properties" : {
                "GroupDescription" : "DataSunrise Security Group (Private Network)",
                "VpcId" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] },
@@ -957,7 +951,6 @@
         },
         "dsSecurityGroupPublicLoadBalancer" : {
             "Type" : "AWS::EC2::SecurityGroup",
-            "DependsOn" : [ "awsVPC" ],
             "Properties" : {
                 "GroupDescription" : "DataSunrise Security Group (Public Load Balancer)",
                 "VpcId" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] },
@@ -988,7 +981,6 @@
         },
         "dsSecurityGroupPublicNetwork" : {
             "Type" : "AWS::EC2::SecurityGroup",
-            "DependsOn" : [ "awsVPC" ],
             "Properties" : {
                 "GroupDescription" : "DataSunrise Security Group (Public Network)",
                 "VpcId" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] }
@@ -996,7 +988,6 @@
         },
         "dsClusterMemberRole" : {
             "Type" : "AWS::IAM::Role",
-            "DependsOn" : [ "dsDBAuditSecret" , "dsDBDictionarySecret" , "dsLicenseSecret" ],
             "Properties" : {
                 "AssumeRolePolicyDocument" : {
                     "Version" : "2012-10-17",
@@ -1065,7 +1056,6 @@
         },
         "dsClusterMemberInstanceProfile" : {
             "Type" : "AWS::IAM::InstanceProfile",
-            "DependsOn" : [ "dsClusterMemberRole" ],
             "Properties" : {
                 "Path" : "/",
                 "Roles" : [ { "Ref" : "dsClusterMemberRole" } ],
@@ -1074,7 +1064,7 @@
         },
         "dsLaunchConfiguration" : {
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
-            "DependsOn" : [ "dsClusterMemberRole" ],
+            "DependsOn" : [ "dsDBAuditSecret" , "dsDBDictionarySecret", "dsLicenseSecret"],
             "Metadata" : {
                 "AWS::CloudFormation::Authentication" : {
                     "S3AccessClusterMember" : {
@@ -1166,12 +1156,11 @@
             "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
             "Properties": {
                 "Scheme" : "internet-facing",
-                "LoadBalancerName" : { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" }, "-load-balancer" ] ] },
                 "SecurityGroups" : [{ "Ref" : "dsSecurityGroupPublicLoadBalancer" }],
                 "Subnets" : [ { "Fn::GetAtt": [ "awsVPC", "Outputs.PublicSubnet1ID" ] }, { "Fn::GetAtt": [ "awsVPC", "Outputs.PublicSubnet2ID" ] } ],
-                "CrossZone" : "true",
+                "CrossZone" : true,
                 "ConnectionSettings" : {
-                    "IdleTimeout" : "120"
+                    "IdleTimeout" : 120
                 },
                 "Listeners" : [
                     {
@@ -1193,26 +1182,29 @@
                     "Target" : { "Ref" : "DSLoadBalancerHealthCheckTarget" },
                     "Timeout" : "5",
                     "UnhealthyThreshold" : "3"
-                }
+                },
+                "Tags" : [ {
+                    "Key" : "Name",
+                    "Value" : { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" }, "-load-balancer" ] ] }
+                } ]                
             }
         },
         "dsAutoScalingGroup": {
             "Type" : "AWS::AutoScaling::AutoScalingGroup",
-            "DependsOn": [ "dsLaunchConfiguration" , "dsLoadBalancerPublic" ],
             "Properties" : {
                 "AutoScalingGroupName" : { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" }, "-autoscaling-group" ] ] },
                 "LaunchConfigurationName" : { "Ref" : "dsLaunchConfiguration" },
-                "LoadBalancerNames" : [ { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" }, "-load-balancer" ] ] } ],
+                "LoadBalancerNames" : [ { "Ref" : "dsLoadBalancerPublic" } ],
                 "MinSize" : { "Ref" : "DSClusterMinimumSize" },
                 "MaxSize" : { "Ref" : "DSClusterMaximumSize" },
                 "VPCZoneIdentifier" : [ { "Fn::GetAtt": [ "awsVPC", "Outputs.PrivateSubnet1AID" ] }, { "Fn::GetAtt": [ "awsVPC", "Outputs.PrivateSubnet2AID" ] } ],
                 "Cooldown" : "300",
                 "HealthCheckType" : "ELB",
-                "HealthCheckGracePeriod" : "600",
+                "HealthCheckGracePeriod" : 600,
                 "Tags" : [ {
                     "Key" : "Name",
                     "Value" : { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" }, "-server" ] ] },
-                    "PropagateAtLaunch" : "true"
+                    "PropagateAtLaunch" : true
                 } ]
             }
         },
@@ -1220,7 +1212,7 @@
             "Type" : "AWS::AutoScaling::ScalingPolicy",
             "Properties" : {
                 "AutoScalingGroupName" : { "Ref" : "dsAutoScalingGroup" },
-                "EstimatedInstanceWarmup" : "300",
+                "EstimatedInstanceWarmup" : 300,
                 "PolicyType" : "TargetTrackingScaling",
                 "TargetTrackingConfiguration": {
                     "PredefinedMetricSpecification": {

@@ -1,0 +1,46 @@
+[
+{
+    "ParameterKey": "VPCAvailabilityZones",
+    "ParameterValue": "$[taskcat_genaz_2]"
+},
+{
+    "ParameterKey": "VPCRemoteAccessCIDR",
+    "ParameterValue": "0.0.0.0/0"
+},
+{
+    "ParameterKey": "LinuxBastionKeyPair",
+    "ParameterValue": "eduardo-quickstart-linux-bastion"
+},
+{
+    "ParameterKey": "RedshiftMasterUserName",
+    "ParameterValue": "$[taskcat_random-string]"
+},
+{
+    "ParameterKey": "RedshiftMasterUserPassword",
+    "ParameterValue": "$[taskcat_genpass_8A]"
+},
+{
+    "ParameterKey": "DSClusterMemberKeyPair",
+    "ParameterValue": "eduardo-quickstart-cluster-member"
+},
+{
+    "ParameterKey": "DSClusterLicense",
+    "ParameterValue": "fn5c9izwmTHdwFMLa37HShrtwy2BsU2gzmWBCWia+pmuHNZdrCJ/1DEwoMWtbBaKyWRNR1PylZ/g6NlmU4s/tg==:0:test"
+},
+{
+    "ParameterKey": "DSAdminPassword",
+    "ParameterValue": "$[taskcat_genpass_8A]"
+},
+{
+    "ParameterKey": "DSUserPassword",
+    "ParameterValue": "$[taskcat_genpass_8A]"
+},
+{
+    "ParameterKey": "QSS3BucketName",
+    "ParameterValue": "aws-quickstart-datasunrise"
+},
+{
+    "ParameterKey": "QSS3KeyPrefix",
+    "ParameterValue": ""
+}
+]
