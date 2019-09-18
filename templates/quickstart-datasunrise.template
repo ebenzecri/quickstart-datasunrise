@@ -291,21 +291,21 @@
                 "db.m4.xlarge", "db.m4.2xlarge", "db.m4.4xlarge", "db.m4.10xlarge", "db.m4.16xlarge", "db.r3.large", "db.r3.xlarge",
                 "db.r3.2xlarge", "db.r3.4xlarge", "db.r3.8xlarge"
             ],
-            "Description" : "RDS Instance Type for Audit database",
+            "Description" : "RDS instance type for audit database",
             "Default" : "db.t2.micro",
             "Type" : "String"
         },
         "DSAuditDBName" : {
             "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
             "ConstraintDescription" : "Must begin with a letter and contain only alphanumeric characters",
-            "Description" : "DataSunrise Audit database name. It's used to store DataSunrise audit logs. Must begin with a letter and contain only alphanumeric characters",
+            "Description" : "DataSunrise Audit is used to store audit logs. Must begin with a letter and contain only alphanumeric characters",
             "Default" : "dsaudit",
             "MaxLength" : "63",
             "MinLength" : "1",
             "Type" : "String"
         },
         "DSAuditDBStorageSize" : {
-            "ConstraintDescription" : "Must be between 200 and 1024 GB",
+            "ConstraintDescription" : "Must be between 100 and 1024 GB",
             "Default" : "200",
             "Description" : "Audit Database Size (GB)",
             "MaxValue" : "1024",
@@ -333,14 +333,14 @@
                 "db.m4.xlarge", "db.m4.2xlarge", "db.m4.4xlarge", "db.m4.10xlarge", "db.m4.16xlarge", "db.r3.large", "db.r3.xlarge",
                 "db.r3.2xlarge", "db.r3.4xlarge", "db.r3.8xlarge"
             ],
-            "Description" : "RDS Instance Type for Dictionary database",
+            "Description" : "RDS instance type for dictionary database",
             "Default" : "db.t2.micro",
             "Type" : "String"
         },
         "DSDictionaryDBName" : {
             "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
             "ConstraintDescription" : "Must begin with a letter and contain only alphanumeric characters",
-            "Description" : "DataSunrise Dictionary database name. It's used to store DataSunrise configuration. Must begin with a letter and contain only alphanumeric characters",
+            "Description" : "DataSunrise Dictionary is used to store configurations. Must begin with a letter and contain only alphanumeric characters",
             "Default" : "dsdictionary",
             "MaxLength" : "63",
             "MinLength" : "1",
@@ -349,7 +349,7 @@
         "DSDictionaryDBStorageSize" : {
             "ConstraintDescription" : "Must be between 20 and 60 GB",
             "Default" : "20",
-            "Description" : "Dictionary Database Size (GB)",
+            "Description" : "Dictionary database size (GB)",
             "MaxValue" : "60",
             "MinValue" : "20",
             "Type" : "Number"
@@ -357,7 +357,7 @@
         "DSDictionaryDBUserName" : {
             "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
             "ConstraintDescription" : "Must begin with a letter and contain only alphanumeric characters",
-            "Description" : "Database username with administrador priviledges. Must begin with a letter and contain only alphanumeric characters",
+            "Description" : "Database username with administrador privileges. Must begin with a letter and contain only alphanumeric characters",
             "Default" : "dsduser",
             "MaxLength" : "16",
             "MinLength" : "1",
@@ -365,12 +365,12 @@
         },
         "DSClusterLicense" : {
             "Default" : "",
-            "Description" : "Valid License string",
+            "Description" : "License string",
             "Type" : "String"
         },
         "DSClusterMaximumSize" : {
             "Default" : "3",
-            "Description" : "The maximum size of DataSunrise Cluster",
+            "Description" : "Maximum size of DataSunrise cluster",
             "Type" : "String"
         },
         "DSClusterMemberInstanceType" : {
@@ -397,36 +397,37 @@
                 "f1.2xlarge" , "f1.4xlarge" , "f1.16xlarge" , "g3s.xlarge" , "g3.4xlarge" , "g3.8xlarge" , "g3.16xlarge" , "p2.xlarge" , "p2.8xlarge" , "p2.16xlarge" ,
                 "p3.2xlarge" , "p3.8xlarge" , "p3.16xlarge" , "p3dn.24xlarge"
             ],
-            "Description" : "EC2 Instance Type to be used by a Cluster Member. Note: t2.micro by default is free tier eligible",
+            "Description" : "EC2 instance type to be used by a cluster member. By default, t2.micro is free tier eligible",
             "Default" : "t2.micro",
             "Type" : "String"
         },
         "DSClusterMemberKeyPair" : {
             "ConstraintDescription" : "EC2 key pair must exist",
-            "Description" : "EC2 Key Pair to be attached",
+            "Description" : "EC2 key pair to be attached",
             "Type" : "AWS::EC2::KeyPair::KeyName"
         },
         "DSClusterMinimumSize" : {
             "Default" : "1",
-            "Description" : "The minimum size of DataSunrise Cluster",
+            "Description" : "Minimum size of DataSunrise cluster",
             "Type" : "String"
         },
         "DSLoadBalancerHealthCheckTarget" : {
             "Type" : "String",
             "Default" : "HTTPS:11000/healthcheck/general",
             "AllowedValues" : [ "HTTPS:11000/healthcheck/all_instances", "HTTPS:11000/healthcheck/general" ],
-            "Description" : "Specifies the instance's protocol and port to check."
+            "Description" : "Specifies which healtcheck type use"
         },
         "DSUserEmail" : {
             "AllowedPattern" : "^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$",
             "ConstraintDescription" : "Must be a valid email address",
             "Default" : "user-email-here@example.domain",
-            "Description": "User Email Address",
+            "Description": "User email address",
             "MinLength" : "6",
             "Type" : "String"
         },        
         "DSUserName" : {
-            "Default" : "MYDATASUNRISEUSERHERE",
+            "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+            "Default" : "mydatasunriseusernamehere",
             "Description": "Regular DataSurise user",            
             "MinLength" : "6",
             "Type" : "String"
@@ -516,7 +517,7 @@
         "RedshiftEnableLoggingToS3" : {
             "AllowedValues" : [ "false", "true" ],
             "Default" : "false",
-            "Description" : "Enables (true) or disables (false) logging to an S3 bucket",
+            "Description" : "Enable (true) or disable (false) logging to an S3 bucket",
             "Type" : "String"
         },
         "RedshiftEncryptionAtRest" : {

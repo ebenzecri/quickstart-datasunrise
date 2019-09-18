@@ -1,7 +1,8 @@
 global:
   marketplace-ami: false
-  owner: quickstart-eng@amazon.com
+  owner: support@datasunrise.com
   qsname: quickstart-datasunrise
+  s3bucket: aws-quickstart-datasunrise 
   regions:
     - ap-northeast-1
     - ap-northeast-2
@@ -11,6 +12,8 @@ global:
     - ca-central-1
     - eu-central-1
     - eu-west-1
+    - eu-west-2
+    - eu-west-3
     - sa-east-1
     - us-east-1
     - us-east-2
@@ -19,9 +22,6 @@ global:
   reporting: true
  
 tests:
-  quickstart-datasunriset1:
+  quickstart-datasunrise-set1:
     parameter_input: quickstart-datasunrise-example-params1.json
-    template_file: quickstart-datasunrise-example1.template
-  quickstart-datasunriset2:
-    parameter_input: quickstart-datasunrise-example-params2.json
-    template_file: quickstart-datasunrise-example2.template
+    template_file: quickstart-datasunrise.template
