@@ -1051,7 +1051,7 @@
                         ]
                     }
                 } ],
-                "RoleName" : "DSClusterMember"
+                "RoleName" : { "Fn::Join" : [ "" , [  "DSClusterMember-" , { "Ref" : "AWS::Region" } ] ] }
             }
         },
         "dsClusterMemberInstanceProfile" : {
@@ -1059,12 +1059,12 @@
             "Properties" : {
                 "Path" : "/",
                 "Roles" : [ { "Ref" : "dsClusterMemberRole" } ],
-                "InstanceProfileName" : "DSClusterMember"
+                "InstanceProfileName" : { "Fn::Join" : [ "" , [  "DSClusterMember-" , { "Ref" : "AWS::Region" } ] ] }
             }
         },
         "dsLaunchConfiguration" : {
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
-            "DependsOn" : [ "dsDBAuditSecret" , "dsDBDictionarySecret", "dsLicenseSecret"],
+            "DependsOn" : [ "dsDBAuditSecret" , "dsDBDictionarySecret" , "dsLicenseSecret"],
             "Metadata" : {
                 "AWS::CloudFormation::Authentication" : {
                     "S3AccessClusterMember" : {
@@ -1185,14 +1185,14 @@
                 },
                 "Tags" : [ {
                     "Key" : "Name",
-                    "Value" : { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" }, "-load-balancer" ] ] }
+                    "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-load-balancer" ] ] }
                 } ]                
             }
         },
         "dsAutoScalingGroup": {
             "Type" : "AWS::AutoScaling::AutoScalingGroup",
             "Properties" : {
-                "AutoScalingGroupName" : { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" }, "-autoscaling-group" ] ] },
+                "AutoScalingGroupName" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-autoscaling-group" ] ] },
                 "LaunchConfigurationName" : { "Ref" : "dsLaunchConfiguration" },
                 "LoadBalancerNames" : [ { "Ref" : "dsLoadBalancerPublic" } ],
                 "MinSize" : { "Ref" : "DSClusterMinimumSize" },

@@ -9,7 +9,7 @@
 },
 {
     "ParameterKey": "LinuxBastionKeyPair",
-    "ParameterValue": "eduardo-quickstart-linux-bastion"
+    "ParameterValue": "tcawsqsds-linux-bastion"
 },
 {
     "ParameterKey": "RedshiftMasterUserName",
@@ -21,7 +21,7 @@
 },
 {
     "ParameterKey": "DSClusterMemberKeyPair",
-    "ParameterValue": "eduardo-quickstart-cluster-member"
+    "ParameterValue": "tcawsqsds-cluster-member"
 },
 {
     "ParameterKey": "DSClusterLicense",
