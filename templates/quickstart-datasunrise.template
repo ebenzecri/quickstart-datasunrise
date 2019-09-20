@@ -1064,7 +1064,7 @@
         },
         "dsLaunchConfiguration" : {
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
-            "DependsOn" : [ "dsDBAuditSecret" , "dsDBDictionarySecret" , "dsLicenseSecret"],
+            "DependsOn" : [ "dsDBAuditSecretAttachment" , "dsDBDictionarySecretAttachment" , "dsLicenseSecret"],
             "Metadata" : {
                 "AWS::CloudFormation::Authentication" : {
                     "S3AccessClusterMember" : {
@@ -1224,17 +1224,28 @@
         }
     },
     "Outputs" : {
-        "DatasunriseConsoleURL" : {
-            "Value" : { "Fn::Join" : [ "", [ "https://", { "Fn::GetAtt" : [ "dsLoadBalancerPublic", "DNSName" ] }, ":11000/v2" ] ] }
+        "awsLinuxBastionPublicIP" : {
+            "Description" : "Linux Bastion Public IP",
+            "Value" : { "Fn::Select" : [ "0" , { "Fn::Split": [":" , {"Fn::GetAtt": [ "awsLinuxBastion" , "Outputs.EIP1" ] }]}] }
         },
-        "ProxyEndpoint" : {
-            "Value" : { "Fn::GetAtt" : [ "dsLoadBalancerPublic", "DNSName" ] }
+        "awsLinuxBastionSecurityGroup" : {
+            "Description" : "Linux Bastion Security Group",
+            "Value" : { "Fn::Select" : [ "0" , { "Fn::Split": [":" , {"Fn::GetAtt": [ "awsLinuxBastion" , "Outputs.BastionSecurityGroupID" ] }]}] }
+        },        
+        "dsWebConsole" : {
+            "Description" : "DataSunrise Web Access",
+            "Value" : { "Fn::Join" : [ "" , [ "https://" , { "Fn::GetAtt" : [ "dsLoadBalancerPublic" , "DNSName" ] } , ":11000/v2" ] ] }
         },
+        "dsLicense" : {
+            "Description" : "DataSunrise License (Secret)",
+            "Value" : { "Fn::Join" : [ "" , [ "https://" , { "Ref" : "AWS::Region" } , ".console.aws.amazon.com/secretsmanager/home?region=" , { "Ref" : "AWS::StackName" } , "#/secret?name=" , { "Fn::Join" : [ "" , [ { "Ref" : "AWS::Region" } , "-licensesecret" ] ] }] ] }
+        },
+
         "RedShiftEndpoitHostname" : {
-            "Value" : { "Fn::Select" : [ "0", { "Fn::Split": [":", {"Fn::GetAtt": [ "awsRedshift", "Outputs.RedshiftClusterEndpoint" ] }]}] }
+            "Value" : { "Fn::Select" : [ "0" , { "Fn::Split": [":" , {"Fn::GetAtt": [ "awsRedshift" , "Outputs.RedshiftClusterEndpoint" ] }]}] }
         },
         "ProxyPort" : {
-            "Value" : { "Fn::Select" : [ "1", { "Fn::Split": [":", {"Fn::GetAtt": [ "awsRedshift", "Outputs.RedshiftClusterEndpoint" ] }]}] }
+            "Value" : { "Fn::Select" : [ "1" , { "Fn::Split": [":" , {"Fn::GetAtt": [ "awsRedshift" , "Outputs.RedshiftClusterEndpoint" ] }]}] }
         }
     }
 }

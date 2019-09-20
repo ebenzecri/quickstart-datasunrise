@@ -83,28 +83,6 @@ installer_download() {
 
 installer_install() {
     sudo chmod +x $INSTALLER_PATH
-    ############### VERBOSE/START ###############
-    echo $INSTALLER_PATH install --without-start --no-password -v -f \
-    --remote-config \
-    --dictionary-type $DS_DBDICTIONARY_TYPE \
-    --dictionary-host $DS_DBDICTIONARY_ADDRESS \
-    --dictionary-port $DS_DBDICTIONARY_PORT \
-    --dictionary-database $DS_DBDICTIONARY_NAME \
-    --dictionary-login $DS_DBDICTIONARY_USERNAME \
-    --dictionary-password $DS_DBDICTIONARY_PASSWORD \
-    --external-audit \
-    --audit-type $DS_DBAUDIT_TYPE \
-    --audit-host $DS_DBAUDIT_ADDRESS \
-    --audit-port $DS_DBAUDIT_PORT \
-    --audit-database $DS_DBAUDIT_NAME \
-    --audit-login $DS_DBAUDIT_USERNAME \
-    --audit-password $DS_DBAUDIT_PASSWORD \
-    --server-name $DATASUNRISE_SERVER_NAME \
-    --server-host $DATASUNRISE_SERVER_HOST \
-    --server-port $DATASUNRISE_SERVER_PORT \
-    --copy-proxies >> $INSTALLER_LOG_INSTALL 2>> $INSTALLER_LOG_INSTALL
-    ############### VERBOSE/END ###############
-    
     echo -ne "\n *** -----------------------------------------------------------\n Installing DataSunrise software\n"  >> $INSTALLER_LOG_INSTALL
     sudo $INSTALLER_PATH install --without-start --no-password -v -f \
     --remote-config \
