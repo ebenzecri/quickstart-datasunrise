@@ -1,5 +1,4 @@
-[
-{
+[{
     "ParameterKey": "VPCAvailabilityZones",
     "ParameterValue": "$[taskcat_genaz_2]"
 },
@@ -9,7 +8,7 @@
 },
 {
     "ParameterKey": "LinuxBastionKeyPair",
-    "ParameterValue": "tcawsqsds-linux-bastion"
+    "ParameterValue": "KEYPAIR-SELECTED-FOR-LINUX-BASTION"
 },
 {
     "ParameterKey": "RedshiftMasterUserName",
@@ -21,11 +20,11 @@
 },
 {
     "ParameterKey": "DSClusterMemberKeyPair",
-    "ParameterValue": "tcawsqsds-cluster-member"
+    "ParameterValue": "KEYPAIR-SELECTED-FOR-CLUSTER-MEMBER"
 },
 {
     "ParameterKey": "DSClusterLicense",
-    "ParameterValue": "fn5c9izwmTHdwFMLa37HShrtwy2BsU2gzmWBCWia+pmuHNZdrCJ/1DEwoMWtbBaKyWRNR1PylZ/g6NlmU4s/tg==:0:test"
+    "ParameterValue": "DATASUNRISE-LICENSE"
 },
 {
     "ParameterKey": "DSAdminPassword",
@@ -34,13 +33,4 @@
 {
     "ParameterKey": "DSUserPassword",
     "ParameterValue": "$[taskcat_genpass_8A]"
-},
-{
-    "ParameterKey": "QSS3BucketName",
-    "ParameterValue": "aws-quickstart-datasunrise"
-},
-{
-    "ParameterKey": "QSS3KeyPrefix",
-    "ParameterValue": ""
-}
-]
+}]
