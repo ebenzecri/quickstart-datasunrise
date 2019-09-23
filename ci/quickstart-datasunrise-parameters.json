@@ -1,0 +1,36 @@
+[{
+    "ParameterKey": "VPCAvailabilityZones",
+    "ParameterValue": "$[taskcat_genaz_2]"
+},
+{
+    "ParameterKey": "VPCRemoteAccessCIDR",
+    "ParameterValue": "0.0.0.0/0"
+},
+{
+    "ParameterKey": "LinuxBastionKeyPair",
+    "ParameterValue": "KEYPAIR-SELECTED-FOR-LINUX-BASTION"
+},
+{
+    "ParameterKey": "RedshiftMasterUserName",
+    "ParameterValue": "$[taskcat_random-string]"
+},
+{
+    "ParameterKey": "RedshiftMasterUserPassword",
+    "ParameterValue": "$[taskcat_genpass_8A]"
+},
+{
+    "ParameterKey": "DSClusterMemberKeyPair",
+    "ParameterValue": "KEYPAIR-SELECTED-FOR-CLUSTER-MEMBER"
+},
+{
+    "ParameterKey": "DSClusterLicense",
+    "ParameterValue": "DATASUNRISE-LICENSE"
+},
+{
+    "ParameterKey": "DSAdminPassword",
+    "ParameterValue": "$[taskcat_genpass_8A]"
+},
+{
+    "ParameterKey": "DSUserPassword",
+    "ParameterValue": "$[taskcat_genpass_8A]"
+}]

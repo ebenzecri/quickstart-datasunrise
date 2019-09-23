@@ -25,37 +25,55 @@ aws_cli_configure() {
 }
 
 aws_secrets_retrieve() {
-# Audit Database
-AWS_DBAUDIT_SECRET="auditsecret"
-DS_DBAUDIT_TYPE="postgresql"
-DS_DBAUDIT_ADDRESS=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBAUDIT_SECRET --query SecretString --output text | jq -r '.host'`
-DS_DBAUDIT_PORT=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBAUDIT_SECRET --query SecretString --output text | jq -r '.port'`
-DS_DBAUDIT_NAME=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBAUDIT_SECRET --query SecretString --output text | jq -r '.dbname'`
-DS_DBAUDIT_USERNAME=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBAUDIT_SECRET --query SecretString --output text | jq -r '.username'`
-DS_DBAUDIT_PASSWORD=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBAUDIT_SECRET --query SecretString --output text | jq -r '.password'`
+    aws_secrets_retrieve_dbaudit
+    aws_secrets_retrieve_dbdictionary
+    aws_secrets_retrieve_redshift
+    aws_secrets_retrieve_license
+    aws_secrets_retrieve_datasunrise_users
+}
 
-# Dictionary Database
-AWS_DBDICTIONARY_SECRET="dictionarysecret"
-DS_DBDICTIONARY_TYPE="postgresql"
-DS_DBDICTIONARY_ADDRESS=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBDICTIONARY_SECRET --query SecretString --output text | jq -r '.host'`
-DS_DBDICTIONARY_PORT=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBDICTIONARY_SECRET --query SecretString --output text | jq -r '.port'`
-DS_DBDICTIONARY_NAME=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBDICTIONARY_SECRET --query SecretString --output text | jq -r '.dbname'`
-DS_DBDICTIONARY_USERNAME=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBDICTIONARY_SECRET --query SecretString --output text | jq -r '.username'`
-DS_DBDICTIONARY_PASSWORD=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBDICTIONARY_SECRET --query SecretString --output text | jq -r '.password'`
+aws_secrets_retrieve_datasunrise_users() {
+    # DataSunrise Admin & User "secrets" will be implemented in the next release
+    DS_PASSWORD="$Par_DSAdminPassword"
+    DS_USER="$Par_DSUser"
+    DS_USER_EMAIL="$Par_DSUserMail"
+    DS_USER_PASSWD="$Par_DSUserPassword"
+    DS_USER_PASSWD_HASH=(`echo -ne "$DS_USER_PASSWD" | md5sum`)
+}
 
-# Redshift "secret" will be implemented in the next release
-HA_DBTYPE=$Par_InstanceType
+aws_secrets_retrieve_dbaudit() {
+    # Audit Database
+    AWS_DBAUDIT_SECRET_NAME="auditsecret"
+    AWS_DBAUDIT_SECRET_STRING=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBAUDIT_SECRET_NAME --query SecretString --output text`
+    DS_DBAUDIT_TYPE="postgresql"
+    DS_DBAUDIT_ADDRESS=`echo $AWS_DBAUDIT_SECRET_STRING | jq -r '.host'`
+    DS_DBAUDIT_PORT=`echo $AWS_DBAUDIT_SECRET_STRING | jq -r '.port'`
+    DS_DBAUDIT_NAME=`echo $AWS_DBAUDIT_SECRET_STRING | jq -r '.dbname'`
+    DS_DBAUDIT_USERNAME=`echo $AWS_DBAUDIT_SECRET_STRING | jq -r '.username'`
+    DS_DBAUDIT_PASSWORD=`echo $AWS_DBAUDIT_SECRET_STRING | jq -r '.password'`
+}
 
-# DataSunrise License
-AWS_LICENSE_SECRET="licensesecret"
-DS_LICENSE=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_LICENSE_SECRET --query SecretString --output text`
+aws_secrets_retrieve_dbdictionary() {
+    # Dictionary Database
+    AWS_DBDICTIONARY_SECRET_NAME="dictionarysecret"
+    AWS_DBDICTIONARY_SECRET_STRING=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBDICTIONARY_SECRET_NAME --query SecretString --output text`
+    DS_DBDICTIONARY_TYPE="postgresql"
+    DS_DBDICTIONARY_ADDRESS=`echo $AWS_DBDICTIONARY_SECRET_STRING | jq -r '.host'`
+    DS_DBDICTIONARY_PORT=`echo $AWS_DBDICTIONARY_SECRET_STRING | jq -r '.port'`
+    DS_DBDICTIONARY_NAME=`echo $AWS_DBDICTIONARY_SECRET_STRING | jq -r '.dbname'`
+    DS_DBDICTIONARY_USERNAME=`echo $AWS_DBDICTIONARY_SECRET_STRING | jq -r '.username'`
+    DS_DBDICTIONARY_PASSWORD=`echo $AWS_DBDICTIONARY_SECRET_STRING | jq -r '.password'`
+}
 
-# DataSunrise Admin & User "secrets" will be implemented in the next release
-DS_PASSWORD="$Par_DSAdminPassword"
-DS_USER="$Par_DSUser"
-DS_USER_EMAIL="$Par_DSUserMail"
-DS_USER_PASSWD="$Par_DSUserPassword"
-DS_USER_PASSWD_HASH=(`echo -ne "$DS_USER_PASSWD" | md5sum`)
+aws_secrets_retrieve_license() {
+    # DataSunrise License
+    AWS_LICENSE_SECRET_NAME="licensesecret"
+    DS_LICENSE=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_LICENSE_SECRET_NAME --query SecretString --output text`
+}
+
+aws_secrets_retrieve_redshift() {
+    # Redshift "secret" will be implemented in the next release
+    HA_DBTYPE=$Par_InstanceType
 }
 
 installer_download() {
@@ -68,22 +86,22 @@ installer_install() {
     echo -ne "\n *** -----------------------------------------------------------\n Installing DataSunrise software\n"  >> $INSTALLER_LOG_INSTALL
     sudo $INSTALLER_PATH install --without-start --no-password -v -f \
     --remote-config \
-    --dictionary-type "$DS_DBDICTIONARY_TYPE" \
-    --dictionary-host "$DS_DBDICTIONARY_ADDRESS" \
-    --dictionary-port "$DS_DBDICTIONARY_PORT" \
-    --dictionary-database "$DS_DBDICTIONARY_NAME" \
-    --dictionary-login "$DS_DBDICTIONARY_USERNAME" \
-    --dictionary-password "$DS_DBDICTIONARY_PASSWORD" \
+    --dictionary-type $DS_DBDICTIONARY_TYPE \
+    --dictionary-host $DS_DBDICTIONARY_ADDRESS \
+    --dictionary-port $DS_DBDICTIONARY_PORT \
+    --dictionary-database $DS_DBDICTIONARY_NAME \
+    --dictionary-login $DS_DBDICTIONARY_USERNAME \
+    --dictionary-password $DS_DBDICTIONARY_PASSWORD \
     --external-audit \
-    --audit-type "$DS_DBAUDIT_TYPE" \
-    --audit-host "$DS_DBAUDIT_ADDRESS" \
-    --audit-port "$DS_DBAUDIT_PORT" \
-    --audit-database "$DS_DBDICTIONARY_NAME" \
-    --audit-login "$DS_DBAUDIT_USERNAME" \
-    --audit-password "$DS_DBAUDIT_PASSWORD" \
-    --server-name "$DATASUNRISE_SERVER_NAME" \
-    --server-host "$DATASUNRISE_SERVER_HOST" \
-    --server-port "$DATASUNRISE_SERVER_NAME" \
+    --audit-type $DS_DBAUDIT_TYPE \
+    --audit-host $DS_DBAUDIT_ADDRESS \
+    --audit-port $DS_DBAUDIT_PORT \
+    --audit-database $DS_DBAUDIT_NAME \
+    --audit-login $DS_DBAUDIT_USERNAME \
+    --audit-password $DS_DBAUDIT_PASSWORD \
+    --server-name $DATASUNRISE_SERVER_NAME \
+    --server-host $DATASUNRISE_SERVER_HOST \
+    --server-port $DATASUNRISE_SERVER_PORT \
     --copy-proxies >> $INSTALLER_LOG_INSTALL 2>> $INSTALLER_LOG_INSTALL
     sleep 2
     echo -ne "\n *** -----------------------------------------------------------\n Setup DataSunrise Result : $?\n"  >> $INSTALLER_LOG_INSTALL
@@ -152,7 +170,7 @@ installer_preinstall() {
 ###[ Main Script ]###
 installer_preinstall
 aws_cli_configure
-aws_secrets_retrieve
 installer_download
+aws_secrets_retrieve
 installer_install
 installer_postinstall
