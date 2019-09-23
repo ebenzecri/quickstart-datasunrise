@@ -214,11 +214,11 @@
                 "RedshiftMaximumConcurrentCluster" : {
                     "default" : "Maximum Number of Concurrent Clusters"
                 },
-                "RedshiftNodesNumber" : {
-                    "default" : "Number of Nodes in Redshift Cluster"
-                },
                 "RedshiftNodeType" : {
                     "default" : "Node Type for Redshift Cluster"
+                },                
+                "RedshiftNodesNumber" : {
+                    "default" : "Number of Nodes in Redshift Cluster"
                 },
                 "RedshiftS3BucketForRedshiftIAMRole" : {
                     "default" : "Amazon S3 Bucket for Redshift IAM Role"
@@ -525,16 +525,16 @@
             "Description" : "Maximum number of concurrency scaling Redshift clusters",
             "Type" : "String"
         },
-        "RedshiftNodesNumber" : {
-            "Description" : "Number of nodes in the cluster. For multi-node clusters, this parameter must be greater than 1",
-            "Default" : "2",
-            "Type" : "Number"
-        },
         "RedshiftNodeType" : {
             "Default" : "dc2.large",
             "Description" : "Type of node to be provisioned",
             "AllowedValues" : [ "dc2.large" , "dc2.8xlarge" , "ds2.xlarge" , "ds2.8xlarge" ],
             "Type" : "String"
+        },
+        "RedshiftNodesNumber" : {
+            "Description" : "Number of nodes in the cluster. For multi-node clusters, this parameter must be greater than 1",
+            "Default" : "2",
+            "Type" : "Number"
         },
         "RedshiftS3BucketForRedshiftIAMRole" : {
             "Description" : "(Optional) Existing Amazon S3 bucket. An IAM role will be created and associated to the Redshift cluster with GET and LIST access to this bucket",
