@@ -273,12 +273,12 @@
             "AllowedPattern" : "^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$",
             "ConstraintDescription" : "Must be a valid email address",
             "Default" : "admin-email-here@example.domain",
-            "Description" : "Admin Email Address",
+            "Description" : "Administrator email address",
             "MinLength" : "6",
             "Type" : "String"
         },         
         "DSAdminPassword" : {
-            "Description" : "DataSunrise Administrator password",
+            "Description" : "Administrator password",
             "MaxLength" : "41",
             "MinLength" : "8",
             "NoEcho" : true,
@@ -415,7 +415,7 @@
             "Type" : "String",
             "Default" : "HTTPS:11000/healthcheck/general",
             "AllowedValues" : [ "HTTPS:11000/healthcheck/all_instances", "HTTPS:11000/healthcheck/general" ],
-            "Description" : "Specifies which healtcheck type use"
+            "Description" : "Specifies which healthcheck type use"
         },
         "DSUserEmail" : {
             "AllowedPattern" : "^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$",
