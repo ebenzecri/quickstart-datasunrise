@@ -158,7 +158,7 @@
                     "default" : "Cluster Member Key Pair"
                 },
                 "DSClusterMinimumSize" : {
-                    "default" : "Cluster Member Maximum Size"
+                    "default" : "Cluster Member Minimmum Size"
                 },
                 "DSLoadBalancerHealthCheckTarget" : {              
                     "default" : "Health Check Target"
@@ -307,7 +307,7 @@
         "DSAuditDBStorageSize" : {
             "ConstraintDescription" : "Must be between 100 and 1024 GB",
             "Default" : "200",
-            "Description" : "Audit Database Size (GB)",
+            "Description" : "Audit database size (GB)",
             "MaxValue" : "1024",
             "MinValue" : "100",
             "Type" : "Number"
@@ -532,19 +532,19 @@
             "Type" : "String"
         },
         "RedshiftNodesNumber" : {
-            "Description" : "Number of nodes in the cluster. For multi-node clusters, this parameter must be greater than 1",
             "Default" : "2",
+            "Description" : "Number of nodes in the cluster. For multi-node clusters, this parameter must be greater than 1",
             "Type" : "Number"
         },
         "RedshiftS3BucketForRedshiftIAMRole" : {
-            "Description" : "(Optional) Existing Amazon S3 bucket. An IAM role will be created and associated to the Redshift cluster with GET and LIST access to this bucket",
             "Default" : "",
+            "Description" : "(Optional) Existing Amazon S3 bucket. An IAM role will be created and associated to the Redshift cluster with GET and LIST access to this bucket",
             "Type" : "String"
         },  
         "RedshiftTagEnvironment" : {
             "AllowedValues" : [ "Development" , "test" , "pre-prod" , "Production" ],
-            "Description" : "Environment tag used to designate the environment stage of the cluster",
             "Default" : "Development",
+            "Description" : "Environment tag used to designate the environment stage of the cluster",
             "Type" : "String"
         },
         "RedshiftTagCompliance" : {
