@@ -414,7 +414,7 @@
         "DSLoadBalancerHealthCheckTarget" : {
             "Type" : "String",
             "Default" : "HTTPS:11000/healthcheck/general",
-            "AllowedValues" : [ "HTTPS:11000/healthcheck/all_instances", "HTTPS:11000/healthcheck/general" ],
+            "AllowedValues" : [ "HTTPS:11000/healthcheck/all_instances" , "HTTPS:11000/healthcheck/general" ],
             "Description" : "Specifies which healthcheck type use"
         },
         "DSUserEmail" : {

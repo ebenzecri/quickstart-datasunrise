@@ -8,7 +8,7 @@
 },
 {
     "ParameterKey": "LinuxBastionKeyPair",
-    "ParameterValue": "KEYPAIR-SELECTED-FOR-LINUX-BASTION"
+    "ParameterValue": "$[taskcat_getkeypair]"
 },
 {
     "ParameterKey": "RedshiftMasterUserName",
@@ -20,7 +20,7 @@
 },
 {
     "ParameterKey": "DSClusterMemberKeyPair",
-    "ParameterValue": "KEYPAIR-SELECTED-FOR-CLUSTER-MEMBER"
+    "ParameterValue": "$[taskcat_getkeypair]"
 },
 {
     "ParameterKey": "DSClusterLicense",
