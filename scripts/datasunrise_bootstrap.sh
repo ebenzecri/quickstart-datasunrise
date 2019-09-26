@@ -43,7 +43,7 @@ aws_secrets_retrieve_datasunrise_users() {
 
 aws_secrets_retrieve_dbaudit() {
     # Audit Database
-    AWS_DBAUDIT_SECRET_NAME="auditsecret"
+    AWS_DBAUDIT_SECRET_NAME="secret-audit"
     AWS_DBAUDIT_SECRET_STRING=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBAUDIT_SECRET_NAME --query SecretString --output text`
     DS_DBAUDIT_TYPE="postgresql"
     DS_DBAUDIT_ADDRESS=`echo $AWS_DBAUDIT_SECRET_STRING | jq -r '.host'`
@@ -55,7 +55,7 @@ aws_secrets_retrieve_dbaudit() {
 
 aws_secrets_retrieve_dbdictionary() {
     # Dictionary Database
-    AWS_DBDICTIONARY_SECRET_NAME="dictionarysecret"
+    AWS_DBDICTIONARY_SECRET_NAME="secret-dictionary"
     AWS_DBDICTIONARY_SECRET_STRING=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBDICTIONARY_SECRET_NAME --query SecretString --output text`
     DS_DBDICTIONARY_TYPE="postgresql"
     DS_DBDICTIONARY_ADDRESS=`echo $AWS_DBDICTIONARY_SECRET_STRING | jq -r '.host'`
@@ -67,7 +67,7 @@ aws_secrets_retrieve_dbdictionary() {
 
 aws_secrets_retrieve_license() {
     # DataSunrise License
-    AWS_LICENSE_SECRET_NAME="licensesecret"
+    AWS_LICENSE_SECRET_NAME="secret-license"
     DS_LICENSE=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_LICENSE_SECRET_NAME --query SecretString --output text`
 }
 
@@ -79,6 +79,10 @@ aws_secrets_retrieve_redshift() {
 installer_download() {
     mkdir -p $INSTALLER_FOLDER_TEMP
     wget -O $INSTALLER_PATH $INSTALLER_URL
+}
+
+installer_clean() {
+    rm -f $INSTALLER_PATH
 }
 
 installer_install() {
@@ -174,3 +178,4 @@ installer_download
 aws_secrets_retrieve
 installer_install
 installer_postinstall
+installer_clean
