@@ -20,7 +20,6 @@
                 {
                     "Label" : { "default" : "Linux Bastion: Basic Configuration" },
                     "Parameters" : [
-                        "LinuxBastionHostsNumber",
                         "LinuxBastionKeyPair"
                     ]
                 },
@@ -113,7 +112,7 @@
             ],
             "ParameterLabels" : {
                 "DSAdminEmail" : {
-                    "default" : "Admin Email"
+                    "default" : "Administrator Email"
                 },                
                 "DSAdminPassword" : {
                     "default" : "Administrator Password"
@@ -172,9 +171,6 @@
                 "DSUserPassword" : {
                     "default" : "User Password"
                 },                
-                "LinuxBastionHostsNumber" : {
-                    "default" : "Number of Bastion Hosts"
-                },
                 "LinuxBastionKeyPair" : {
                     "default" : "Bastion Key Pair"
                 },
@@ -278,6 +274,8 @@
             "Type" : "String"
         },         
         "DSAdminPassword" : {
+            "AllowedPattern" : "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?!._*[@/\\\\\\\"']).*$",
+            "ConstraintDescription" : "Enter alphanumeric password for the master user. The password must contain 8 to 41 printable ASCII characters, excluding: /, \", \\'', \\", 
             "Description" : "Administrator password",
             "MaxLength" : "41",
             "MinLength" : "8",
@@ -322,8 +320,9 @@
             "Type" : "String"
         },
         "DSAutoScalingPolicyAverageCPUBusy" : {
+            "AllowedValues" : [ "50" , "60" , "70" , "80" , "90" ],
             "Default" : "50",
-            "Description" : "Average CPU utilization",
+            "Description" : "Average CPU utilization (%)",
             "Type" : "String"
         },        
         "DSDictionaryDBClass" : {
@@ -369,6 +368,7 @@
             "Type" : "String"
         },
         "DSClusterMaximumSize" : {
+            "AllowedValues" : [ "1" , "2" , "3" , "4" , "5" , "6" , "7", "8" , "9" , "10" ],
             "Default" : "3",
             "Description" : "Maximum size of DataSunrise cluster",
             "Type" : "String"
@@ -407,6 +407,7 @@
             "Type" : "AWS::EC2::KeyPair::KeyName"
         },
         "DSClusterMinimumSize" : {
+            "AllowedValues" : [ "1" , "2" , "3" , "4" , "5" , "6" , "7", "8" , "9" , "10" ],
             "Default" : "1",
             "Description" : "Minimum size of DataSunrise cluster",
             "Type" : "String"
@@ -433,18 +434,14 @@
             "Type" : "String"
         },
         "DSUserPassword" : {
+            "AllowedPattern" : "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?!._*[@/\\\\\\\"']).*$",
+            "ConstraintDescription" : "Enter alphanumeric password for the master user. The password must contain 8 to 41 printable ASCII characters, excluding: /, \", \\'', \\", 
             "Description" : "User password",
             "MaxLength" : "41",
             "MinLength" : "6",
             "NoEcho" : true,
             "Type" : "String"
-        },                        
-        "LinuxBastionHostsNumber" : {
-            "AllowedValues" : [ "1" , "2" , "3" , "4" ],
-            "Description" : "Number of bastion hosts to be deployed",
-            "Default" : "1",
-            "Type" : "String"
-        },       
+        },                               
         "LinuxBastionKeyPair" : {
             "ConstraintDescription" : "EC2 key pair must exist",
             "Description" : "EC2 key pair to be attached",
@@ -484,7 +481,7 @@
         "RedshiftEncryptionAtRest" : {
             "AllowedValues" : [ "false", "true" ],
             "Default" : "false",
-            "Description" : "Enables or disables encryption at rest of the Redshift database",
+            "Description" : "Enable (true) or disable (false) encryption at rest of the Redshift database",
             "Type" : "String"
         },
         "RedshiftGlueCatalogDB" : {
@@ -548,7 +545,7 @@
             "Type" : "String"
         },
         "RedshiftTagCompliance" : {
-            "AllowedValues" : [  "sox" , "fips" ,  "hippa",  "other" , "none" ],    
+            "AllowedValues" : [  "sox" , "fips" ,  "hipaa",  "other" , "none" ],    
             "Default" : "none",
             "Description" : "Compliance level for the cluster",
             "Type" : "String"
@@ -631,7 +628,9 @@
         }
     },
     "Mappings" : {
-        "RegionMap" : {
+        "RedshiftTags" : {
+        },        
+        "RegionAMI" : {
             "us-east-1" : { "AMI" : "ami-1853ac65" },
             "us-east-2" : { "AMI" : "ami-25615740" },
             "us-west-1" : { "AMI" : "ami-bf5540df" },
@@ -686,7 +685,7 @@
                 "Properties" : {
                     "TemplateURL" : {
                         "Fn::Sub" : [
-                            "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-linux-bastion-master/templates/linux-bastion.template",
+                            "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion.template",
                             {
                                 "QSS3Region" : {
                                     "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
@@ -712,7 +711,7 @@
                         "EnableTCPForwarding" : "false",
                         "EnableX11Forwarding" : "false",
                         "KeyPairName" : { "Ref" : "LinuxBastionKeyPair" },
-                        "NumBastionHosts" : { "Ref" : "LinuxBastionHostsNumber" },
+                        "NumBastionHosts" : "1",
                         "PublicSubnet1ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PublicSubnet1ID" ] },
                         "PublicSubnet2ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PublicSubnet2ID" ] },
                         "RemoteAccessCIDR" : { "Ref" : "VPCRemoteAccessCIDR" },
@@ -725,7 +724,7 @@
                 "Properties" : {
                     "TemplateURL" : {
                         "Fn::Sub" : [
-                            "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-amazon-redshift-master/templates/redshift.template.yaml",
+                            "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-amazon-redshift/templates/redshift.template.yaml",
                             {
                                 "QSS3Region" : {
                                     "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
@@ -1123,7 +1122,7 @@
                 }
             },
             "Properties" : {
-                "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ] },
+                "ImageId" : { "Fn::FindInMap" : [ "RegionAMI", { "Ref" : "AWS::Region" } , "AMI" ] },
                 "InstanceType" : { "Ref" : "DSClusterMemberInstanceType" },
                 "SecurityGroups" : [{ "Ref" : "dsSecurityGroupPrivateNetwork" }],
                 "KeyName" : { "Ref" : "DSClusterMemberKeyPair" },
