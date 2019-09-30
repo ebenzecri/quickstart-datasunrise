@@ -838,7 +838,15 @@
                 "Description" : "DataSunrise (License)",
                 "SecretString" : { "Ref" : "DSClusterLicense" }
             }
-        },            
+        },
+        "dsSecretAdminPassword" : {
+            "Type" : "AWS::SecretsManager::Secret",
+            "Properties" : {
+                "Name" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-admin-password" ] ] },
+                "Description" : "DataSunrise (Administrator Password)",
+                "SecretString" : { "Ref" : "DSAdminPassword" }
+            }
+        },                                
         "dsSecurityGroupPrivateNetwork" : {
            "Type" : "AWS::EC2::SecurityGroup",
            "Properties" : {
@@ -974,87 +982,79 @@
         "dsClusterMemberRole" : {
             "Type" : "AWS::IAM::Role",
             "Properties" : {
-                "AssumeRolePolicyDocument" : {
-                    "Version" : "2012-10-17",
-                    "Statement" : [ {
-                        "Effect" : "Allow",
-                        "Principal" : {
-                            "Service" : [ "ec2.amazonaws.com" ]
-                        },
-                    "Action" : [ "sts:AssumeRole" ]
-                    } ]
-                },
                 "Path" : "/",
-                "Policies" : [ {
-                    "PolicyName" : "root",
-                    "PolicyDocument" : {
-                        "Version" : "2012-10-17",
-                        "Statement" : [
-                            {
-                                "Effect" : "Allow",
-                                "Action" : [ "s3:GetObject" ],
-                                "Resource" : {
-                                    "Fn::Sub" : [
-                                        "arn:${Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*",
-                                        {
-                                            "Partition" : {
-                                                "Fn::If" : [ "GovCloudCondition" , "aws-us-gov" , "aws" ]
-                                            }
-                                        }
-                                    ]
-                                }
+                "AssumeRolePolicyDocument" : {
+                    "Statement" : [
+                        {
+                            "Action" : [ "sts:AssumeRole" ],
+                            "Principal" : {
+                                "Service" : [ "ec2.amazonaws.com" ]
                             },
-                            {
-                                "Effect" : "Allow",
-                                "Action" : "ec2:Describe*",
-                                "Resource" : "*"
-                            },
-                            {
-                                "Effect" : "Allow",
-                                "Action" : "elasticloadbalancing:Describe*",
-                                "Resource" : "*"
-                            },
-                            {
-                                "Effect" : "Allow",
-                                "Action" : [
-                                    "cloudwatch:ListMetrics",
-                                    "cloudwatch:GetMetricStatistics",
-                                    "cloudwatch:Describe*"
-                                ],
-                                "Resource" : "*"
-                            },
-                            {
-                                "Effect" : "Allow",
-                                "Action" : "autoscaling:Describe*",
-                                "Resource" : "*"
-                            },                            
-                            {
-                                "Effect" : "Allow",
-                                "Action" : [ "secretsmanager:DescribeSecret" , "secretsmanager:GetSecretValue" , "secretsmanager:PutSecretValue", "secretsmanager:UpdateSecretVersionStage" ],
-                                "Resource" : [ { "Ref" : "dsSecretDBAudit" } , { "Ref" : "dsSecretDBDictionary" } , { "Ref" : "dsSecretLicense" } ] 
-                            }
-                        ]
-                    }
-                } ],
-                "RoleName" : { "Fn::Join" : [ "" , [  "DSClusterMember-" , { "Ref" : "AWS::Region" } ] ] }
+                            "Effect" : "Allow"
+                        }
+                    ],
+                    "Version" : "2012-10-17"
+                },
+                "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM" ]
             }
         },
-        "dsClusterMemberInstanceProfile" : {
+        "dsClusterMemberPolicy" : {
+            "Type" : "AWS::IAM::Policy",
+            "Properties" : {
+                "PolicyName" : "DSClusterMemberPolicy",
+                "PolicyDocument" : {
+                    "Version" : "2012-10-17",
+                    "Statement" : [
+                        {
+                            "Action" : [ "s3:GetObject" ],
+                            "Resource" : {
+                                "Fn::Sub" : [
+                                    "arn:${Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*",
+                                    {
+                                        "Partition" : {
+                                            "Fn::If" : [
+                                                "GovCloudCondition",
+                                                "aws-us-gov",
+                                                "aws"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            "Effect" : "Allow"
+                        },
+                        {
+                            "Action" : [ "ec2:AssociateAddress" , "ec2:DescribeAddresses" ],
+                            "Resource" : "*",
+                            "Effect" : "Allow"
+                        },
+                        {
+                            "Effect" : "Allow",
+                            "Action" : [ "secretsmanager:DescribeSecret" , "secretsmanager:GetSecretValue" , "secretsmanager:PutSecretValue", "secretsmanager:UpdateSecretVersionStage" ],
+                            "Resource" : [ { "Ref" : "dsSecretDBAudit" } , { "Ref" : "dsSecretDBDictionary" } , { "Ref" : "dsSecretLicense" } , { "Ref" : "dsSecretAdminPassword" } ] 
+                        }                        
+                    ]
+                },
+                "Roles": [ { "Ref" : "dsClusterMemberRole" } ]
+            }
+        },
+        "dsClusterMemberProfile" : {
+            "DependsOn" : "dsClusterMemberPolicy",
             "Type" : "AWS::IAM::InstanceProfile",
             "Properties" : {
-                "Path" : "/",
                 "Roles" : [ { "Ref" : "dsClusterMemberRole" } ],
-                "InstanceProfileName" : { "Fn::Join" : [ "" , [  "DSClusterMember-" , { "Ref" : "AWS::Region" } ] ] }
+                "Path" : "/"
             }
         },
         "dsLaunchConfiguration" : {
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
-            "DependsOn" : [ "dsSecretAttachmentDBAudit" , "dsSecretAttachmentDBDictionary" , "dsSecretLicense"],
+            "DependsOn" : [ "dsSecretAttachmentDBAudit" , "dsSecretAttachmentDBDictionary" , "dsSecretLicense" , "dsSecretAdminPassword" ],
             "Metadata" : {
                 "AWS::CloudFormation::Authentication" : {
                     "S3AccessClusterMember" : {
                         "type" : "S3",
-                            "roleName" : { "Ref" : "dsClusterMemberRole" }
+                            "roleName" : { "Ref" : "dsClusterMemberRole" },
+                            "buckets" : { "Ref" : "QSS3BucketName" }
                     }
                 },
                 "AWS::CloudFormation::Init" : {
@@ -1112,16 +1112,15 @@
                 "InstanceType" : { "Ref" : "DSClusterMemberInstanceType" },
                 "SecurityGroups" : [{ "Ref" : "dsSecurityGroupPrivateNetwork" }],
                 "KeyName" : { "Ref" : "DSClusterMemberKeyPair" },
-                "IamInstanceProfile" : { "Fn::GetAtt" : [ "dsClusterMemberInstanceProfile", "Arn" ] },
+                "IamInstanceProfile" : { "Fn::GetAtt" : [ "dsClusterMemberProfile", "Arn" ] },
                 "UserData" : { "Fn::Base64" : { "Fn::Join" : [ "", [
                     "#!/bin/bash\n",
                     "\n",
                     "export CFUD_AWS_STACK_NAME=\"",    { "Ref" : "AWS::StackName" }, "\"\n",
-                    "export Par_DSAdminPassword=\"", { "Ref" : "DSAdminPassword" }, "\"\n",
+                    "export CFUD_AWS_INSTANCE_TYPE=\"", "redshift", "\"\n",                    
                     "export Par_DSUser=\"", { "Ref" : "DSUserName" }, "\"\n",
                     "export Par_DSUserMail=\"", { "Ref" : "DSUserEmail" }, "\"\n",
                     "export Par_DSUserPassword=\"", { "Ref" : "DSUserPassword" }, "\"\n",
-                    "export Par_InstanceType=\"", "redshift", "\"\n",
                     "export Par_InstanceHost=\"", { "Fn::Select" : [ "0", { "Fn::Split" : [":" , {"Fn::GetAtt" : [ "awsRedshift", "Outputs.RedshiftClusterEndpoint" ] }]}] }, "\"\n",
                     "export Par_InstancePort=\"", { "Ref" : "RedshiftClusterPort" }, "\"\n",
                     "export Par_InstanceDatabaseName=\"", { "Ref" : "RedshiftDBName" }, "\"\n",
@@ -1241,31 +1240,31 @@
         },
         "awsLinuxBastionSecurityGroup" : {
             "Description" : "Linux Bastion Security Group",
-            "Value" : { "Fn::Join" : [ "" , [ "https://console.aws.amazon.com/ec2/v2/home?region=" , { "Ref" : "AWS::Region" } , "#SecurityGroups:search=" , { "Fn::GetAtt" : [ "awsLinuxBastion" , "Outputs.BastionSecurityGroupID" ] } , ";sort=groupId" ] ] }
+            "Value" : { "Fn::GetAtt" : [ "awsLinuxBastion" , "Outputs.BastionSecurityGroupID" ] }
         },  
         "dsSecurityGroupPublicLoadBalancer" : {
             "Description" : "DataSunrise Security Group (Public Load Balancer)",
-            "Value" : { "Fn::Join" : [ "" , [ "https://console.aws.amazon.com/ec2/v2/home?region=" , { "Ref" : "AWS::Region" } , "#SecurityGroups:search=" , { "Fn::GetAtt" : [ "dsSecurityGroupPublicLoadBalancer" , "GroupId" ] } , ";sort=groupId" ] ] }
+            "Value" : { "Fn::GetAtt" : [ "dsSecurityGroupPublicLoadBalancer" , "GroupId" ] }
         },
         "dsSecurityGroupPublicNetwork" : {
             "Description" : "DataSunrise Security Group (Public Network)",
-            "Value" : { "Fn::Join" : [ "" , [ "https://console.aws.amazon.com/ec2/v2/home?region=" , { "Ref" : "AWS::Region" } , "#SecurityGroups:search=" , { "Fn::GetAtt" : [ "dsSecurityGroupPublicNetwork" , "GroupId" ] } , ";sort=groupId" ] ] }
+            "Value" : { "Fn::GetAtt" : [ "dsSecurityGroupPublicNetwork" , "GroupId" ] }
         },
         "dsSecurityGroupPrivateNetwork" : {
             "Description" : "DataSunrise Security Group (Private Network)",
-            "Value" : { "Fn::Join" : [ "" , [ "https://console.aws.amazon.com/ec2/v2/home?region=" , { "Ref" : "AWS::Region" } , "#SecurityGroups:search=" , { "Fn::GetAtt" : [ "dsSecurityGroupPrivateNetwork" , "GroupId" ] } , ";sort=groupId" ] ] }
+            "Value" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateNetwork" , "GroupId" ] }
         },
         "dsLicenseSecret" : {
             "Description" : "DataSunrise License (Secret)",
-            "Value" : { "Fn::Join" : [ "" , [ "https://" , { "Ref" : "AWS::Region" } , ".console.aws.amazon.com/secretsmanager/home?region=" , { "Ref" : "AWS::Region" } , "#/secret?name=" , { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-license" ] ] }] ] }
+            "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-license" ] ] }
         },
         "dsAuditDBSecret" : {
             "Description" : "DataSunrise Audit Database (Secret)",
-            "Value" : { "Fn::Join" : [ "" , [ "https://" , { "Ref" : "AWS::Region" } , ".console.aws.amazon.com/secretsmanager/home?region=" , { "Ref" : "AWS::Region" } , "#/secret?name=" , { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-audit" ] ] }] ] }
+            "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-audit" ] ] }
         },
         "dsDictionaryDBSecret" : {
             "Description" : "DataSunrise Dictionary Database (Secret)",
-            "Value" : { "Fn::Join" : [ "" , [ "https://" , { "Ref" : "AWS::Region" } , ".console.aws.amazon.com/secretsmanager/home?region=" , { "Ref" : "AWS::Region" } , "#/secret?name=" , { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-dictionary" ] ] }] ] }
+            "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-dictionary" ] ] }
         },
         "RedShiftClusterEndpoitHostname" : {
             "Description" : "Redshift Cluster Endpoint",
