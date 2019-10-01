@@ -16,7 +16,7 @@
 },
 {
     "ParameterKey" : "RedshiftMasterUserPassword",
-    "ParameterValue" : "$[taskcat_genpass_12AJ]"
+    "ParameterValue" : "$[taskcat_genpass_12A]"
 },
 {
     "ParameterKey" : "DSClusterMemberKeyPair",
