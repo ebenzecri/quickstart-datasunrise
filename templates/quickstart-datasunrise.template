@@ -843,10 +843,18 @@
             "Type" : "AWS::SecretsManager::Secret",
             "Properties" : {
                 "Name" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-admin-password" ] ] },
-                "Description" : "DataSunrise (Administrator Password)",
-                "SecretString" : { "Ref" : "DSAdminPassword" }
+                "Description" : "DataSunrise (admin Password)",
+                "SecretString" : { "Fn::Join" : [ "" , [ "{\"username\":\"" , "admin" , "\",\"password\":\"" , { "Ref" : "DSUserPassword" } , "\"}" ] ] }
             }
-        },                                
+        },
+        "dsSecretUserPassword" : {
+            "Type" : "AWS::SecretsManager::Secret",
+            "Properties" : {
+                "Name" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-user-password" ] ] },
+                "Description" : { "Fn::Join" : [ "" , [ "DataSunrise (" , { "Ref" : "DSUserName" } , " Password)" ] ] },
+                "SecretString" : { "Fn::Join" : [ "" , [ "{\"username\":\"" , { "Ref" : "DSUserName" } , "\",\"password\":\"" , { "Ref" : "DSUserPassword" } , "\",\"email\":\"" , { "Ref" : "DSUserEmail" } , "\"}" ] ] }
+            }
+        },                                                                 
         "dsSecurityGroupPrivateNetwork" : {
            "Type" : "AWS::EC2::SecurityGroup",
            "Properties" : {
@@ -1031,7 +1039,7 @@
                         {
                             "Effect" : "Allow",
                             "Action" : [ "secretsmanager:DescribeSecret" , "secretsmanager:GetSecretValue" , "secretsmanager:PutSecretValue", "secretsmanager:UpdateSecretVersionStage" ],
-                            "Resource" : [ { "Ref" : "dsSecretDBAudit" } , { "Ref" : "dsSecretDBDictionary" } , { "Ref" : "dsSecretLicense" } , { "Ref" : "dsSecretAdminPassword" } ] 
+                            "Resource" : [ { "Ref" : "dsSecretDBAudit" } , { "Ref" : "dsSecretDBDictionary" } , { "Ref" : "dsSecretLicense" } , { "Ref" : "dsSecretAdminPassword" } , { "Ref" : "dsSecretUserPassword" } ] 
                         }                        
                     ]
                 },
@@ -1048,13 +1056,13 @@
         },
         "dsLaunchConfiguration" : {
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
-            "DependsOn" : [ "dsSecretAttachmentDBAudit" , "dsSecretAttachmentDBDictionary" , "dsSecretLicense" , "dsSecretAdminPassword" ],
+            "DependsOn" : [ "dsSecretAttachmentDBAudit" , "dsSecretAttachmentDBDictionary" , "dsSecretLicense" , "dsSecretAdminPassword" , "dsSecretUserPassword" ],
             "Metadata" : {
                 "AWS::CloudFormation::Authentication" : {
                     "S3AccessClusterMember" : {
                         "type" : "S3",
-                            "roleName" : { "Ref" : "dsClusterMemberRole" },
-                            "buckets" : { "Ref" : "QSS3BucketName" }
+                        "roleName" : { "Ref" : "dsClusterMemberRole" },
+                        "buckets" : { "Ref" : "QSS3BucketName" }
                     }
                 },
                 "AWS::CloudFormation::Init" : {
@@ -1118,9 +1126,6 @@
                     "\n",
                     "export CFUD_AWS_STACK_NAME=\"",    { "Ref" : "AWS::StackName" }, "\"\n",
                     "export CFUD_AWS_INSTANCE_TYPE=\"", "redshift", "\"\n",                    
-                    "export Par_DSUser=\"", { "Ref" : "DSUserName" }, "\"\n",
-                    "export Par_DSUserMail=\"", { "Ref" : "DSUserEmail" }, "\"\n",
-                    "export Par_DSUserPassword=\"", { "Ref" : "DSUserPassword" }, "\"\n",
                     "export Par_InstanceHost=\"", { "Fn::Select" : [ "0", { "Fn::Split" : [":" , {"Fn::GetAtt" : [ "awsRedshift", "Outputs.RedshiftClusterEndpoint" ] }]}] }, "\"\n",
                     "export Par_InstancePort=\"", { "Ref" : "RedshiftClusterPort" }, "\"\n",
                     "export Par_InstanceDatabaseName=\"", { "Ref" : "RedshiftDBName" }, "\"\n",

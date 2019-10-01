@@ -35,13 +35,17 @@ aws_secrets_retrieve() {
 aws_secrets_retrieve_datasunrise_users() {
     # Admin
     AWS_ADMIN_PASSWORD_SECRET_NAME="secret-admin-password"
-    DS_ADMIN_PASSWORD=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_ADMIN_PASSWORD_SECRET_NAME --query SecretString --output text`
+    AWS_ADMIN_SECRET_STRING=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_ADMIN_PASSWORD_SECRET_NAME --query SecretString --output text`
+    DS_ADMIN_USER=`echo $AWS_ADMIN_SECRET_STRING | jq -r '.username'`
+    DS_ADMIN_PASSWORD=`echo $AWS_ADMIN_SECRET_STRING | jq -r '.password'`
 
-    # DataSunrise User "secrets" will be implemented in the next release
-    DS_USER="$Par_DSUser"
-    DS_USER_EMAIL="$Par_DSUserMail"
-    DS_USER_PASSWD="$Par_DSUserPassword"
+    # User
+    AWS_USER_PASSWORD_SECRET_NAME="secret-user-password"
+    AWS_USER_SECRET_STRING=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_USER_PASSWORD_SECRET_NAME --query SecretString --output text`
+    DS_USER=`echo $AWS_USER_SECRET_STRING | jq -r '.username'`
+    DS_USER_PASSWD=`echo $AWS_USER_SECRET_STRING | jq -r '.password'`
     DS_USER_PASSWD_HASH=(`echo -ne "$DS_USER_PASSWD" | md5sum`)
+    DS_USER_EMAIL=`echo $AWS_USER_SECRET_STRING | jq -r '.email'`
 }
 
 aws_secrets_retrieve_dbaudit() {
@@ -76,7 +80,7 @@ aws_secrets_retrieve_license() {
 
 aws_secrets_retrieve_protected_instance() {
     DS_DBPROTECTED_TYPE=$CFUD_AWS_INSTANCE_TYPE
-    # Redshift "secret" will be implemented in the next release
+    # Redshift "secret" will be implemented in the next release after checking if that's possible
 }
 
 installer_download() {
@@ -86,7 +90,6 @@ installer_download() {
 
 installer_clean() {
     sudo rm -fr $INSTALLER_FOLDER_TEMP
-    sudo rm -f $INSTALLER_PATH
 }
 
 installer_install() {
@@ -160,7 +163,7 @@ fi
 # Additional settings
 echo -ne "\n *** -----------------------------------------------------------\n Setup additional settings\n" >> $DATASUNRISE_LOG_SETUP
 cd /opt/datasunrise/cmdline
-./executecommand.sh connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login admin -password "$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+./executecommand.sh connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login "$DS_ADMIN_USER" -password "$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
 ./executecommand.sh changeParameter -name WebLoadBalancerEnabled -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
 ./executecommand.sh disConnect -f 2>> $DATASUNRISE_LOG_SETUP
 
