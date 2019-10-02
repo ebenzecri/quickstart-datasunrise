@@ -79,8 +79,8 @@ aws_secrets_retrieve_license() {
 }
 
 aws_secrets_retrieve_protected_instance() {
+    # Redshift Cluster
     DS_DBPROTECTED_TYPE=$CFUD_AWS_INSTANCE_TYPE
-    # Redshift "secret" will be implemented in the next release after checking if that's possible
 }
 
 installer_download() {

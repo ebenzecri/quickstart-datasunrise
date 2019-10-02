@@ -272,7 +272,7 @@
         "DSAdminPassword" : {
             "AllowedPattern" : "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?!._*[@/\\\\\\\"']).*$",
             "ConstraintDescription" : "Enter alphanumeric password for the master user. The password must contain 8 to 41 printable ASCII characters, excluding: /, \", \\'', \\", 
-            "Description" : "Administrator password",
+            "Description" : "Administrator password. Must contain 8 to 41 printable ASCII characters (excluding: /, \", \\'', \\)",
             "MaxLength" : "41",
             "MinLength" : "8",
             "NoEcho" : true,
@@ -425,14 +425,14 @@
         "DSUserName" : {
             "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
             "Default" : "mydatasunriseusernamehere",
-            "Description" : "Regular DataSurise user",            
+            "Description" : "Regular DataSurise user. Must begin with a letter and contain only alphanumeric characters",            
             "MinLength" : "6",
             "Type" : "String"
         },
         "DSUserPassword" : {
             "AllowedPattern" : "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?!._*[@/\\\\\\\"']).*$",
             "ConstraintDescription" : "Enter alphanumeric password for the master user. The password must contain 8 to 41 printable ASCII characters, excluding: /, \", \\'', \\", 
-            "Description" : "User password",
+            "Description" : "User password. Must contain 8 to 41 printable ASCII characters (excluding: /, \", \\'', \\)",
             "MaxLength" : "41",
             "MinLength" : "6",
             "NoEcho" : true,
@@ -1126,11 +1126,13 @@
                     "\n",
                     "export CFUD_AWS_STACK_NAME=\"",    { "Ref" : "AWS::StackName" }, "\"\n",
                     "export CFUD_AWS_INSTANCE_TYPE=\"", "redshift", "\"\n",                    
+
                     "export Par_InstanceHost=\"", { "Fn::Select" : [ "0", { "Fn::Split" : [":" , {"Fn::GetAtt" : [ "awsRedshift", "Outputs.RedshiftClusterEndpoint" ] }]}] }, "\"\n",
                     "export Par_InstancePort=\"", { "Ref" : "RedshiftClusterPort" }, "\"\n",
                     "export Par_InstanceDatabaseName=\"", { "Ref" : "RedshiftDBName" }, "\"\n",
                     "export Par_InstanceLogin=\"", { "Ref" : "RedshiftMasterUserName" }, "\"\n",
                     "export Par_InstancePassword=\"", { "Ref" : "RedshiftMasterUserPassword" }, "\"\n",
+                    
                     "export PATH=$PATH:/usr/local/bin\n",
                     "which pip &> /dev/null\n",
                     "if [ $? -ne 0 ] ; then\n",
@@ -1271,6 +1273,14 @@
             "Description" : "DataSunrise Dictionary Database (Secret)",
             "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-dictionary" ] ] }
         },
+        "dsSecretAdminPassword" : {
+            "Description" : "DataSunrise Admin Password (Secret)",
+            "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-admin-password" ] ] }
+        },
+        "dsSecretUserPassword" : {
+            "Description" : "DataSunrise User Password (Secret)",
+            "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-user-password" ] ] }
+        },        
         "RedShiftClusterEndpoitHostname" : {
             "Description" : "Redshift Cluster Endpoint",
             "Value" : { "Fn::Select" : [ "0" , { "Fn::Split" : [ ":" , { "Fn::GetAtt" : [ "awsRedshift" , "Outputs.RedshiftClusterEndpoint" ] } ] } ] }
