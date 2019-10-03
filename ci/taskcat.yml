@@ -25,6 +25,6 @@ tests:
     parameter_input: quickstart-datasunrise-parameters.json
     template_file: quickstart-datasunrise.template
     regions:
-    - ap-northeast-1
+    - ap-south-1
     - sa-east-1
     - us-east-1
