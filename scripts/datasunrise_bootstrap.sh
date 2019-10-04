@@ -80,7 +80,14 @@ aws_secrets_retrieve_license() {
 
 aws_secrets_retrieve_protected_instance() {
     # Redshift Cluster
+    AWS_DBPROTECTED_SECRET_NAME="secret-redshift"
+    AWS_DBPROTECTED_SECRET_STRING=`aws --region $AWS_REGION secretsmanager get-secret-value --secret-id $AWS_STACK_NAME-$AWS_DBPROTECTED_SECRET_NAME --query SecretString --output text`
     DS_DBPROTECTED_TYPE=$CFUD_AWS_INSTANCE_TYPE
+    DS_DBPROTECTED_ADDRESS=`echo $AWS_DBPROTECTED_SECRET_STRING | jq -r '.host'`
+    DS_DBPROTECTED_PORT=`echo $AWS_DBPROTECTED_SECRET_STRING | jq -r '.port'`
+    DS_DBPROTECTED_NAME=`echo $AWS_DBPROTECTED_SECRET_STRING | jq -r '.dbname'`
+    DS_DBPROTECTED_USERNAME=`echo $AWS_DBPROTECTED_SECRET_STRING | jq -r '.username'`
+    DS_DBPROTECTED_PASSWORD=`echo $AWS_DBPROTECTED_SECRET_STRING | jq -r '.password'`
 }
 
 installer_download() {
@@ -153,7 +160,7 @@ if [ $? != 0 ]; then
     echo -ne "\n *** -----------------------------------------------------------\n User JSON\n$DS_USER_JSON\n" >> $DATASUNRISE_LOG_SETUP
     ./executecommand.sh arbitrary -function updateUser -jsonContent "$DS_USER_JSON" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
     echo -ne "\n *** -----------------------------------------------------------\n Add instance '$DATASUNRISE_DBINSTANCE_NAME'\n" >> $DATASUNRISE_LOG_SETUP
-    ./executecommand.sh addInstancePlus -name "$DATASUNRISE_DBINSTANCE_NAME" -dbType "$DS_DBPROTECTED_TYPE" -dbHost "$Par_InstanceHost" -dbPort "$Par_InstancePort" -database "$Par_InstanceDatabaseName" -login "$Par_InstanceLogin" -password "$Par_InstancePassword" -proxyHost 0.0.0.0 -proxyPort "$Par_InstancePort" -savePassword ds 2>> $DATASUNRISE_LOG_SETUP
+    ./executecommand.sh addInstancePlus -name "$DATASUNRISE_DBINSTANCE_NAME" -dbType "$DS_DBPROTECTED_TYPE" -dbHost "$DS_DBPROTECTED_ADDRESS" -dbPort "$DS_DBPROTECTED_PORT" -database "$DS_DBPROTECTED_NAME" -login "$DS_DBPROTECTED_USERNAME" -password "$DS_DBPROTECTED_PASSWORD" -proxyHost 0.0.0.0 -proxyPort "$DS_DBPROTECTED_PORT" -savePassword ds 2>> $DATASUNRISE_LOG_SETUP
     echo -ne "\n *** -----------------------------------------------------------\n Add DDL audit rule\n" >> $DATASUNRISE_LOG_SETUP
     ./executecommand.sh addRule -action audit -name AuditRuleAdmin -logData true -filterType ddl -ddlSelectAll true -dbType "$DS_DBPROTECTED_TYPE" 2>> $DATASUNRISE_LOG_SETUP
     echo -ne "\n *** -----------------------------------------------------------\n Add DML audit rule\n" >> $DATASUNRISE_LOG_SETUP
