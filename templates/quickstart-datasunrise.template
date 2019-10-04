@@ -1047,7 +1047,7 @@
                         {
                             "Effect" : "Allow",
                             "Action" : [ "secretsmanager:DescribeSecret" , "secretsmanager:GetSecretValue" , "secretsmanager:PutSecretValue", "secretsmanager:UpdateSecretVersionStage" ],
-                            "Resource" : [ { "Ref" : "dsSecretDBAudit" } , { "Ref" : "dsSecretDBDictionary" } , { "Ref" : "dsSecretLicense" } , { "Ref" : "dsSecretAdminPassword" } , { "Ref" : "dsSecretUserPassword" } ] 
+                            "Resource" : [ { "Ref" : "dsSecretDBAudit" } , { "Ref" : "dsSecretDBDictionary" } , { "Ref" : "dsSecretLicense" } , { "Ref" : "dsSecretAdminPassword" } , { "Ref" : "dsSecretUserPassword" } , { "Ref" : "awsSecretRedshift"  }] 
                         }                        
                     ]
                 },
@@ -1064,7 +1064,7 @@
         },
         "dsLaunchConfiguration" : {
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
-            "DependsOn" : [ "dsSecretAttachmentDBAudit" , "dsSecretAttachmentDBDictionary" , "dsSecretLicense" , "dsSecretAdminPassword" , "dsSecretUserPassword" ],
+            "DependsOn" : [ "dsSecretAttachmentDBAudit" , "dsSecretAttachmentDBDictionary" , "dsSecretLicense" , "dsSecretAdminPassword" , "dsSecretUserPassword" , "awsSecretRedshift" ],
             "Metadata" : {
                 "AWS::CloudFormation::Authentication" : {
                     "S3AccessClusterMember" : {
