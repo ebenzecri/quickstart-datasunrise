@@ -5,7 +5,7 @@
         "AWS::CloudFormation::Interface" : {
             "ParameterGroups" : [
                 {
-                    "Label" : { "default" : "Virtual Private Cloud: Basic Configuration" },
+                    "Label" : { "default" : "Amazon VPC: basic configuration" },
                     "Parameters" : [
                         "VPCAvailabilityZones",
                         "VPCCIDR",
@@ -18,13 +18,13 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "Linux Bastion: Basic Configuration" },
+                    "Label" : { "default" : "Linux bastion: basic configuration" },
                     "Parameters" : [
                         "LinuxBastionKeyPair"
                     ]
                 },
                 {
-                    "Label" : { "default" : "Redshift: Basic Configuration" },
+                    "Label" : { "default" : "Amazon Redshift: basic configuration" },
                     "Parameters" : [
                         "RedshiftNodeType",
                         "RedshiftNodesNumber",
@@ -34,7 +34,7 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "Redshift: Tag Identifiers" },
+                    "Label" : { "default" : "Amazon Redshift: tag identifiers" },
                     "Parameters" : [
                         "RedshiftTagEnvironment",
                         "RedshiftTagName",
@@ -44,7 +44,7 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "Redshift: Advanced Configuration" },
+                    "Label" : { "default" : "Amazon Redshift: advanced configuration" },
                     "Parameters" : [
                         "RedshiftClusterPort",                        
                         "RedshiftEnableLoggingToS3",
@@ -57,7 +57,7 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "DataSunrise Cluster: Basic Configuration" },
+                    "Label" : { "default" : "DataSunrise: basic cluster configuration" },
                     "Parameters" : [
                         "DSClusterMinimumSize",
                         "DSClusterMaximumSize",
@@ -67,7 +67,7 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "DataSunrise: Dictionary Database Configuration" },
+                    "Label" : { "default" : "DataSunrise: dictionary configuration" },
                     "Parameters" : [
                         "DSDictionaryDBName",
                         "DSDictionaryDBUserName",
@@ -76,7 +76,7 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "DataSunrise: Audit Database Configuration" },
+                    "Label" : { "default" : "DataSunrise: audit configuration" },
                     "Parameters" : [
                         "DSAuditDBName",
                         "DSAuditDBUserName",
@@ -85,14 +85,14 @@
                     ]
                 },              
                 {
-                    "Label" : { "default" : "DataSunrise Cluster: Advanced Configuration" },
+                    "Label" : { "default" : "DataSunrise: advanced cluster configuration" },
                     "Parameters" : [
                         "DSAutoScalingPolicyAverageCPUBusy",
                         "DSLoadBalancerHealthCheckTarget"
                     ]
                 },
                 {
-                    "Label" : { "default" : "DataSunrise: Users Configuration" },
+                    "Label" : { "default" : "DataSunrise: users configuration" },
                     "Parameters" : [
                         "DSAdminEmail",
                         "DSAdminPassword",
@@ -102,7 +102,7 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "AWS Quick Start: Configuration" },
+                    "Label" : { "default" : "AWS Quick Start: configuration" },
                     "Parameters" : [
                         "QSS3BucketName",
                         "QSS3KeyPrefix"
@@ -111,127 +111,127 @@
             ],
             "ParameterLabels" : {
                 "DSAdminEmail" : {
-                    "default" : "Administrator Email"
+                    "default" : "Administrator email"
                 },                
                 "DSAdminPassword" : {
-                    "default" : "Administrator Password"
+                    "default" : "Administrator password"
                 },
                 "DSAuditDBClass" : {
-                    "default" : "Audit Database Instance Type"
+                    "default" : "Audit database instance type"
                 },
                 "DSAuditDBName" : {
-                    "default" : "Audit Database Name"
+                    "default" : "Audit database name"
                 },
                 "DSAuditDBUserName" : {
-                    "default" : "Audit Database Username"
+                    "default" : "Audit database username"
                 },
                 "DSAuditDBStorageSize" : {
-                    "default" : "Audit Database Size"
+                    "default" : "Audit database size"
                 },
                 "DSAutoScalingPolicyAverageCPUBusy" : {
-                    "default" : "Average CPU Utilization"
+                    "default" : "Average CPU utilization"
                 },                
                 "DSDictionaryDBClass" : {
-                    "default" : "Dictionary Database Instance Type"
+                    "default" : "Dictionary database instance type"
                 },
                 "DSDictionaryDBName" : {
-                    "default" : "Dictionary Database Name"
+                    "default" : "Dictionary database name"
                 },
                 "DSDictionaryDBUserName" : {
-                    "default" : "Dictionary Database Username"
+                    "default" : "Dictionary database username"
                 },
                 "DSDictionaryDBStorageSize" : {
-                    "default" : "Dictionary Database Size"
+                    "default" : "Dictionary database size"
                 },
                 "DSClusterLicense" : {
-                    "default" : "DataSunrise License"
+                    "default" : "DataSunrise license"
                 },                
                 "DSClusterMaximumSize" : {
-                    "default" : "Cluster Member Maximum Size"
+                    "default" : "Cluster member maximum size"
                 },
                 "DSClusterMemberInstanceType" : {
-                    "default" : "Cluster Member Instance Type"
+                    "default" : "Cluster member instance type"
                 },
                 "DSClusterMemberKeyPair" : {
-                    "default" : "Cluster Member Key Pair"
+                    "default" : "Cluster member key pair"
                 },
                 "DSClusterMinimumSize" : {
-                    "default" : "Cluster Member Minimmum Size"
+                    "default" : "Cluster member minimum size"
                 },
                 "DSLoadBalancerHealthCheckTarget" : {              
-                    "default" : "Health Check Target"
+                    "default" : "Health check target"
                 },
                 "DSUserEmail" : {
-                    "default" : "User Email"
+                    "default" : "User email"
                 },
                 "DSUserName" : {
-                    "default" : "User Name"
+                    "default" : "User name"
                 },
                 "DSUserPassword" : {
-                    "default" : "User Password"
+                    "default" : "User password"
                 },                
                 "LinuxBastionKeyPair" : {
-                    "default" : "Bastion Key Pair"
+                    "default" : "Bastion key pair"
                 },
                 "QSS3BucketName" : {
-                    "default" : "Quick Start S3 Bucket Name"
+                    "default" : "Quick Start S3 bucket name"
                 },
                 "QSS3KeyPrefix" : {
-                    "default" : "Quick Start S3 Key Prefix"
+                    "default" : "Quick Start S3 key prefix"
                 },
                 "RedshiftClusterPort" : {
-                    "default" : "Redshift Cluster Port"
+                    "default" : "Redshift cluster port"
                 },
                 "RedshiftDBName" : {
-                    "default" : "Redshift Database Name"
+                    "default" : "Redshift database name"
                 },
                 "RedshiftEnableLoggingToS3" : {
-                    "default" : "Enable Redshift Logging to S3"
+                    "default" : "Enable Redshift logging to S3"
                 },
                 "RedshiftEncryptionAtRest" : {
-                    "default" : "Encryption at Rest"
+                    "default" : "Encryption at rest"
                 },
                 "RedshiftGlueCatalogDB" : {
-                    "default" : "Glue Catalog Database Name"
+                    "default" : "Glue catalog database name"
                 },                 
                 "RedshiftKMSKey" : {
-                    "default" : "KMS Key ID"
+                    "default" : "KMS key ID"
                 },                 
                 "RedshiftMaintenanceWindow" : {
-                    "default" : "Maintenance Window"
+                    "default" : "Maintenance window"
                 },
                 "RedshiftMasterUserName" : {
-                    "default" : "Redshift Master User Name"
+                    "default" : "Redshift master user name"
                 },
                 "RedshiftMasterUserPassword" : {
-                    "default" : "Redshift Master User Password"
+                    "default" : "Redshift master user password"
                 },
                 "RedshiftMaximumConcurrentCluster" : {
-                    "default" : "Maximum Number of Concurrent Clusters"
+                    "default" : "Maximum number of concurrent clusters"
                 },
                 "RedshiftNodeType" : {
-                    "default" : "Node Type for Redshift Cluster"
+                    "default" : "Node type for Redshift cluster"
                 },                
                 "RedshiftNodesNumber" : {
-                    "default" : "Number of Nodes in Redshift Cluster"
+                    "default" : "Number of nodes in Redshift cluster"
                 },
                 "RedshiftS3BucketForRedshiftIAMRole" : {
-                    "default" : "Amazon S3 Bucket for Redshift IAM Role"
+                    "default" : "Amazon S3 bucket for Redshift IAM role"
                 },             
                 "RedshiftTagEnvironment" : {
                     "default" : "Environment"
                 },
                 "RedshiftTagCompliance" : {
-                    "default" : "Compliance Classifier"
+                    "default" : "Compliance classifier"
                 },                  
                 "RedshiftTagConfidentiality" : {
-                    "default" : "Confidentiality Classifier"
+                    "default" : "Confidentiality classifier"
                 },                
                 "RedshiftTagName" : {
-                    "default" : "Unique Friendly Name"
+                    "default" : "Unique friendly name"
                 },
                 "RedshiftTagProjectCostCenter" : {
-                    "default" : "Project Cost Center"
+                    "default" : "Project cost center"
                 },
                 "VPCAvailabilityZones" : {
                     "default" : "Availability Zones"
@@ -240,22 +240,22 @@
                     "default" : "VPC CIDR"
                 },
                 "VPCPrivateSubnet1CIDR" : {
-                    "default" : "Private Subnet 1A CIDR"
+                    "default" : "Private subnet 1A CIDR"
                 },
                 "VPCPrivateSubnet2CIDR" : {
-                    "default" : "Private Subnet 2A CIDR"
+                    "default" : "Private subnet 2A CIDR"
                 },
                 "VPCPublicSubnet1CIDR" : {
-                    "default" : "Public Subnet 1 CIDR"
+                    "default" : "Public subnet 1 CIDR"
                 },
                 "VPCPublicSubnet2CIDR" : {
-                    "default" : "Public Subnet 2 CIDR"
+                    "default" : "Public subnet 2 CIDR"
                 },
                 "VPCRemoteAccessCIDR" : {
-                    "default" : "Allowed External Access CIDR"
+                    "default" : "Allowed external access CIDR"
                 },                
                 "VPCTenancy" : {
-                    "default" : "VPC Tenancy"
+                    "default" : "VPC tenancy"
                 }
             }
         }
@@ -366,7 +366,7 @@
         "DSClusterMaximumSize" : {
             "AllowedValues" : [ "1" , "2" , "3" , "4" , "5" , "6" , "7", "8" , "9" , "10" ],
             "Default" : "3",
-            "Description" : "Maximum size of DataSunrise cluster",
+            "Description" : "Maximum size of DataSunrise cluster. It must be equal or greater than its minimum size",
             "Type" : "String"
         },
         "DSClusterMemberInstanceType" : {
