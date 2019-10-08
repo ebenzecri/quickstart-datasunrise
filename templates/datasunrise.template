@@ -5,7 +5,7 @@
         "AWS::CloudFormation::Interface" : {
             "ParameterGroups" : [
                 {
-                    "Label" : { "default" : "Virtual Private Cloud: Basic Configuration" },
+                    "Label" : { "default" : "Amazon VPC: basic configuration" },
                     "Parameters" : [
                         "VPCAvailabilityZones",
                         "VPCCIDR",
@@ -18,13 +18,13 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "Linux Bastion: Basic Configuration" },
+                    "Label" : { "default" : "Linux bastion: basic configuration" },
                     "Parameters" : [
                         "LinuxBastionKeyPair"
                     ]
                 },
                 {
-                    "Label" : { "default" : "Redshift: Basic Configuration" },
+                    "Label" : { "default" : "Amazon Redshift: basic configuration" },
                     "Parameters" : [
                         "RedshiftNodeType",
                         "RedshiftNodesNumber",
@@ -34,7 +34,7 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "Redshift: Tag Identifiers" },
+                    "Label" : { "default" : "Amazon Redshift: tag identifiers" },
                     "Parameters" : [
                         "RedshiftTagEnvironment",
                         "RedshiftTagName",
@@ -44,7 +44,7 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "Redshift: Advanced Configuration" },
+                    "Label" : { "default" : "Amazon Redshift: advanced configuration" },
                     "Parameters" : [
                         "RedshiftClusterPort",                        
                         "RedshiftEnableLoggingToS3",
@@ -57,7 +57,7 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "DataSunrise Cluster: Basic Configuration" },
+                    "Label" : { "default" : "DataSunrise: basic cluster configuration" },
                     "Parameters" : [
                         "DSClusterMinimumSize",
                         "DSClusterMaximumSize",
@@ -67,7 +67,7 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "DataSunrise: Dictionary Database Configuration" },
+                    "Label" : { "default" : "DataSunrise: dictionary configuration" },
                     "Parameters" : [
                         "DSDictionaryDBName",
                         "DSDictionaryDBUserName",
@@ -76,7 +76,7 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "DataSunrise: Audit Database Configuration" },
+                    "Label" : { "default" : "DataSunrise: audit configuration" },
                     "Parameters" : [
                         "DSAuditDBName",
                         "DSAuditDBUserName",
@@ -85,14 +85,14 @@
                     ]
                 },              
                 {
-                    "Label" : { "default" : "DataSunrise Cluster: Advanced Configuration" },
+                    "Label" : { "default" : "DataSunrise: advanced cluster configuration" },
                     "Parameters" : [
                         "DSAutoScalingPolicyAverageCPUBusy",
                         "DSLoadBalancerHealthCheckTarget"
                     ]
                 },
                 {
-                    "Label" : { "default" : "DataSunrise: Users Configuration" },
+                    "Label" : { "default" : "DataSunrise: users configuration" },
                     "Parameters" : [
                         "DSAdminEmail",
                         "DSAdminPassword",
@@ -102,7 +102,7 @@
                     ]
                 },
                 {
-                    "Label" : { "default" : "AWS Quick Start: Configuration" },
+                    "Label" : { "default" : "AWS Quick Start: configuration" },
                     "Parameters" : [
                         "QSS3BucketName",
                         "QSS3KeyPrefix"
@@ -111,127 +111,127 @@
             ],
             "ParameterLabels" : {
                 "DSAdminEmail" : {
-                    "default" : "Administrator Email"
+                    "default" : "Administrator email"
                 },                
                 "DSAdminPassword" : {
-                    "default" : "Administrator Password"
+                    "default" : "Administrator password"
                 },
                 "DSAuditDBClass" : {
-                    "default" : "Audit Database Instance Type"
+                    "default" : "Audit database instance type"
                 },
                 "DSAuditDBName" : {
-                    "default" : "Audit Database Name"
+                    "default" : "Audit database name"
                 },
                 "DSAuditDBUserName" : {
-                    "default" : "Audit Database Username"
+                    "default" : "Audit database username"
                 },
                 "DSAuditDBStorageSize" : {
-                    "default" : "Audit Database Size"
+                    "default" : "Audit database size"
                 },
                 "DSAutoScalingPolicyAverageCPUBusy" : {
-                    "default" : "Average CPU Utilization"
+                    "default" : "Average CPU utilization"
                 },                
                 "DSDictionaryDBClass" : {
-                    "default" : "Dictionary Database Instance Type"
+                    "default" : "Dictionary database instance type"
                 },
                 "DSDictionaryDBName" : {
-                    "default" : "Dictionary Database Name"
+                    "default" : "Dictionary database name"
                 },
                 "DSDictionaryDBUserName" : {
-                    "default" : "Dictionary Database Username"
+                    "default" : "Dictionary database username"
                 },
                 "DSDictionaryDBStorageSize" : {
-                    "default" : "Dictionary Database Size"
+                    "default" : "Dictionary database size"
                 },
                 "DSClusterLicense" : {
-                    "default" : "DataSunrise License"
+                    "default" : "DataSunrise license"
                 },                
                 "DSClusterMaximumSize" : {
-                    "default" : "Cluster Member Maximum Size"
+                    "default" : "Cluster member maximum size"
                 },
                 "DSClusterMemberInstanceType" : {
-                    "default" : "Cluster Member Instance Type"
+                    "default" : "Cluster member instance type"
                 },
                 "DSClusterMemberKeyPair" : {
-                    "default" : "Cluster Member Key Pair"
+                    "default" : "Cluster member key pair"
                 },
                 "DSClusterMinimumSize" : {
-                    "default" : "Cluster Member Minimmum Size"
+                    "default" : "Cluster member minimum size"
                 },
                 "DSLoadBalancerHealthCheckTarget" : {              
-                    "default" : "Health Check Target"
+                    "default" : "Health check target"
                 },
                 "DSUserEmail" : {
-                    "default" : "User Email"
+                    "default" : "User email"
                 },
                 "DSUserName" : {
-                    "default" : "User Name"
+                    "default" : "User name"
                 },
                 "DSUserPassword" : {
-                    "default" : "User Password"
+                    "default" : "User password"
                 },                
                 "LinuxBastionKeyPair" : {
-                    "default" : "Bastion Key Pair"
+                    "default" : "Bastion key pair"
                 },
                 "QSS3BucketName" : {
-                    "default" : "Quick Start S3 Bucket Name"
+                    "default" : "Quick Start S3 bucket name"
                 },
                 "QSS3KeyPrefix" : {
-                    "default" : "Quick Start S3 Key Prefix"
+                    "default" : "Quick Start S3 key prefix"
                 },
                 "RedshiftClusterPort" : {
-                    "default" : "Redshift Cluster Port"
+                    "default" : "Redshift cluster port"
                 },
                 "RedshiftDBName" : {
-                    "default" : "Redshift Database Name"
+                    "default" : "Redshift database name"
                 },
                 "RedshiftEnableLoggingToS3" : {
-                    "default" : "Enable Redshift Logging to S3"
+                    "default" : "Enable Redshift logging to S3"
                 },
                 "RedshiftEncryptionAtRest" : {
-                    "default" : "Encryption at Rest"
+                    "default" : "Encryption at rest"
                 },
                 "RedshiftGlueCatalogDB" : {
-                    "default" : "Glue Catalog Database Name"
+                    "default" : "Glue catalog database name"
                 },                 
                 "RedshiftKMSKey" : {
-                    "default" : "KMS Key ID"
+                    "default" : "KMS key ID"
                 },                 
                 "RedshiftMaintenanceWindow" : {
-                    "default" : "Maintenance Window"
+                    "default" : "Maintenance window"
                 },
                 "RedshiftMasterUserName" : {
-                    "default" : "Redshift Master User Name"
+                    "default" : "Redshift master user name"
                 },
                 "RedshiftMasterUserPassword" : {
-                    "default" : "Redshift Master User Password"
+                    "default" : "Redshift master user password"
                 },
                 "RedshiftMaximumConcurrentCluster" : {
-                    "default" : "Maximum Number of Concurrent Clusters"
+                    "default" : "Maximum number of concurrent clusters"
                 },
                 "RedshiftNodeType" : {
-                    "default" : "Node Type for Redshift Cluster"
+                    "default" : "Node type for Redshift cluster"
                 },                
                 "RedshiftNodesNumber" : {
-                    "default" : "Number of Nodes in Redshift Cluster"
+                    "default" : "Number of nodes in Redshift cluster"
                 },
                 "RedshiftS3BucketForRedshiftIAMRole" : {
-                    "default" : "Amazon S3 Bucket for Redshift IAM Role"
+                    "default" : "Amazon S3 bucket for Redshift IAM role"
                 },             
                 "RedshiftTagEnvironment" : {
                     "default" : "Environment"
                 },
                 "RedshiftTagCompliance" : {
-                    "default" : "Compliance Classifier"
+                    "default" : "Compliance classifier"
                 },                  
                 "RedshiftTagConfidentiality" : {
-                    "default" : "Confidentiality Classifier"
+                    "default" : "Confidentiality classifier"
                 },                
                 "RedshiftTagName" : {
-                    "default" : "Unique Friendly Name"
+                    "default" : "Unique friendly name"
                 },
                 "RedshiftTagProjectCostCenter" : {
-                    "default" : "Project Cost Center"
+                    "default" : "Project cost center"
                 },
                 "VPCAvailabilityZones" : {
                     "default" : "Availability Zones"
@@ -240,22 +240,22 @@
                     "default" : "VPC CIDR"
                 },
                 "VPCPrivateSubnet1CIDR" : {
-                    "default" : "Private Subnet 1A CIDR"
+                    "default" : "Private subnet 1A CIDR"
                 },
                 "VPCPrivateSubnet2CIDR" : {
-                    "default" : "Private Subnet 2A CIDR"
+                    "default" : "Private subnet 2A CIDR"
                 },
                 "VPCPublicSubnet1CIDR" : {
-                    "default" : "Public Subnet 1 CIDR"
+                    "default" : "Public subnet 1 CIDR"
                 },
                 "VPCPublicSubnet2CIDR" : {
-                    "default" : "Public Subnet 2 CIDR"
+                    "default" : "Public subnet 2 CIDR"
                 },
                 "VPCRemoteAccessCIDR" : {
-                    "default" : "Allowed External Access CIDR"
+                    "default" : "Allowed external access CIDR"
                 },                
                 "VPCTenancy" : {
-                    "default" : "VPC Tenancy"
+                    "default" : "VPC tenancy"
                 }
             }
         }
@@ -366,7 +366,7 @@
         "DSClusterMaximumSize" : {
             "AllowedValues" : [ "1" , "2" , "3" , "4" , "5" , "6" , "7", "8" , "9" , "10" ],
             "Default" : "3",
-            "Description" : "Maximum size of DataSunrise cluster",
+            "Description" : "Maximum size of DataSunrise cluster. It must be equal or greater than its minimum size",
             "Type" : "String"
         },
         "DSClusterMemberInstanceType" : {
@@ -644,36 +644,48 @@
     "Resources" : {
         "awsVPC" : {
             "Type" : "AWS::CloudFormation::Stack",
-                "Properties" : {
-                    "TemplateURL" : {
-                        "Fn::Sub" : [
-                            "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template",
-                            {
-                                "QSS3Region" : {
-                                    "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
-                                }
+            "Properties" : {
+                "TemplateURL" : {
+                    "Fn::Sub" : [
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template",
+                        {
+                            "QSS3Region" : {
+                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
                             }
-                        ]
-                    },
-                    "Parameters" : {
-                        "AvailabilityZones" : { "Fn::Join" : [ "," , { "Ref" : "VPCAvailabilityZones" } ] },
-                        "KeyPairName" : { "Ref" : "DSClusterMemberKeyPair" },
-                        "NumberOfAZs" : "2",
-                        "PrivateSubnet1ACIDR" : { "Ref" : "VPCPrivateSubnet1CIDR" },
-                        "PrivateSubnet2ACIDR" : { "Ref" : "VPCPrivateSubnet2CIDR" },
-                        "PublicSubnet1CIDR" : { "Ref" : "VPCPublicSubnet1CIDR" },
-                        "PublicSubnet2CIDR" : { "Ref" : "VPCPublicSubnet2CIDR" },
-                        "VPCCIDR" : { "Ref" : "VPCCIDR" },
-                        "VPCTenancy" : { "Ref" : "VPCTenancy" }
-                    }
+                        }
+                    ]
+                },
+                "Parameters" : {
+                    "AvailabilityZones" : { "Fn::Join" : [ "," , { "Ref" : "VPCAvailabilityZones" } ] },
+                    "KeyPairName" : { "Ref" : "DSClusterMemberKeyPair" },
+                    "NumberOfAZs" : "2",
+                    "PrivateSubnet1ACIDR" : { "Ref" : "VPCPrivateSubnet1CIDR" },
+                    "PrivateSubnet2ACIDR" : { "Ref" : "VPCPrivateSubnet2CIDR" },
+                    "PublicSubnet1CIDR" : { "Ref" : "VPCPublicSubnet1CIDR" },
+                    "PublicSubnet2CIDR" : { "Ref" : "VPCPublicSubnet2CIDR" },
+                    "VPCCIDR" : { "Ref" : "VPCCIDR" },
+                    "VPCTenancy" : { "Ref" : "VPCTenancy" }
                 }
+            }
         },
         "awsLinuxBastion" : {
             "Type" : "AWS::CloudFormation::Stack",
-                "Properties" : {
-                    "TemplateURL" : {
+            "Properties" : {
+                "TemplateURL" : {
+                    "Fn::Sub" : [
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion.template",
+                        {
+                            "QSS3Region" : {
+                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
+                            }
+                        }
+                    ]
+                },
+                "Parameters" : {
+                    "BastionAMIOS" : "Amazon-Linux-HVM",
+                    "BastionBanner" : {
                         "Fn::Sub" : [
-                            "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion.template",
+                            "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}scripts/banner_message",
                             {
                                 "QSS3Region" : {
                                     "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
@@ -681,74 +693,70 @@
                             }
                         ]
                     },
-                    "Parameters" : {
-                        "BastionAMIOS" : "Amazon-Linux-HVM",
-                        "BastionBanner" : {
-                            "Fn::Sub" : [
-                                "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}scripts/banner_message",
-                                {
-                                    "QSS3Region" : {
-                                        "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
-                                    }
-                                }
-                            ]
-                        },
-                        "BastionInstanceType" : "t2.micro",
-                        "BastionTenancy" : { "Ref" : "VPCTenancy" },
-                        "EnableBanner" : "false",
-                        "EnableTCPForwarding" : "false",
-                        "EnableX11Forwarding" : "false",
-                        "KeyPairName" : { "Ref" : "LinuxBastionKeyPair" },
-                        "NumBastionHosts" : "1",
-                        "PublicSubnet1ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PublicSubnet1ID" ] },
-                        "PublicSubnet2ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PublicSubnet2ID" ] },
-                        "RemoteAccessCIDR" : { "Ref" : "VPCRemoteAccessCIDR" },
-                        "VPCID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] }
-                    }
+                    "BastionInstanceType" : "t2.micro",
+                    "BastionTenancy" : { "Ref" : "VPCTenancy" },
+                    "EnableBanner" : "false",
+                    "EnableTCPForwarding" : "false",
+                    "EnableX11Forwarding" : "false",
+                    "KeyPairName" : { "Ref" : "LinuxBastionKeyPair" },
+                    "NumBastionHosts" : "1",
+                    "PublicSubnet1ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PublicSubnet1ID" ] },
+                    "PublicSubnet2ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PublicSubnet2ID" ] },
+                    "RemoteAccessCIDR" : { "Ref" : "VPCRemoteAccessCIDR" },
+                    "VPCID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] }
                 }
+            }
         },
         "awsRedshift" : {
             "Type" : "AWS::CloudFormation::Stack",
-                "Properties" : {
-                    "TemplateURL" : {
-                        "Fn::Sub" : [
-                            "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-amazon-redshift/templates/redshift.template.yaml",
-                            {
-                                "QSS3Region" : {
-                                    "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
-                                }
+            "Properties" : {
+                "TemplateURL" : {
+                    "Fn::Sub" : [
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-amazon-redshift/templates/redshift.template.yaml",
+                        {
+                            "QSS3Region" : {
+                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
                             }
-                        ]
-                    },
-                    "Parameters" : {
-                        "DatabaseName" : { "Ref" : "RedshiftDBName" },
-                        "EnableLoggingToS3" : { "Ref" : "RedshiftEnableLoggingToS3" },
-                        "EncryptionAtRest" : { "Ref" : "RedshiftEncryptionAtRest" },
-                        "GlueCatalogDatabase" : { "Ref" : "RedshiftGlueCatalogDB" },
-                        "kmskey" : { "Ref" : "RedshiftKMSKey" },
-                        "Maintenancewindow" : { "Ref" : "RedshiftMaintenanceWindow" },
-                        "MasterUsername" : { "Ref" : "RedshiftMasterUserName" },
-                        "MasterUserPassword" : { "Ref" : "RedshiftMasterUserPassword" },
-                        "MaxConcurrentCluster" : { "Ref" : "RedshiftMaximumConcurrentCluster" },
-                        "NodeType" : { "Ref" : "RedshiftNodeType" },
-                        "NotificationList" : { "Ref" : "DSAdminEmail" },
-                        "NumberOfNodes" : { "Ref" : "RedshiftNodesNumber" },
-                        "RedshiftClusterPort" : { "Ref" : "RedshiftClusterPort" },
-                        "RemoteAccessCIDR" : { "Ref" : "VPCCIDR" },
-                        "S3BucketForRedshiftIAMRole" : { "Ref" : "RedshiftS3BucketForRedshiftIAMRole" },
-                        "SnapshotAccountNumber" : "",
-                        "SnapshotIdentifier" : "",
-                        "Subnet1ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PrivateSubnet1AID" ] },
-                        "Subnet2ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PrivateSubnet2AID" ] },
-                        "TagCompliance" : { "Ref" : "RedshiftTagCompliance" },
-                        "TagConfidentiality" : { "Ref" : "RedshiftTagConfidentiality" },
-                        "TagEnvironment" : { "Ref" : "RedshiftTagEnvironment" },
-                        "TagName" : { "Ref" : "RedshiftTagName" },
-                        "TagProjectCostCenter" : { "Ref" : "RedshiftTagProjectCostCenter" },
-                        "VPCID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] }
-                    }
+                        }
+                    ]
+                },
+                "Parameters" : {
+                    "DatabaseName" : { "Ref" : "RedshiftDBName" },
+                    "EnableLoggingToS3" : { "Ref" : "RedshiftEnableLoggingToS3" },
+                    "EncryptionAtRest" : { "Ref" : "RedshiftEncryptionAtRest" },
+                    "GlueCatalogDatabase" : { "Ref" : "RedshiftGlueCatalogDB" },
+                    "kmskey" : { "Ref" : "RedshiftKMSKey" },
+                    "Maintenancewindow" : { "Ref" : "RedshiftMaintenanceWindow" },
+                    "MasterUsername" : { "Ref" : "RedshiftMasterUserName" },
+                    "MasterUserPassword" : { "Ref" : "RedshiftMasterUserPassword" },
+                    "MaxConcurrentCluster" : { "Ref" : "RedshiftMaximumConcurrentCluster" },
+                    "NodeType" : { "Ref" : "RedshiftNodeType" },
+                    "NotificationList" : { "Ref" : "DSAdminEmail" },
+                    "NumberOfNodes" : { "Ref" : "RedshiftNodesNumber" },
+                    "RedshiftClusterPort" : { "Ref" : "RedshiftClusterPort" },
+                    "RemoteAccessCIDR" : { "Ref" : "VPCCIDR" },
+                    "S3BucketForRedshiftIAMRole" : { "Ref" : "RedshiftS3BucketForRedshiftIAMRole" },
+                    "SnapshotAccountNumber" : "",
+                    "SnapshotIdentifier" : "",
+                    "Subnet1ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PrivateSubnet1AID" ] },
+                    "Subnet2ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PrivateSubnet2AID" ] },
+                    "TagCompliance" : { "Ref" : "RedshiftTagCompliance" },
+                    "TagConfidentiality" : { "Ref" : "RedshiftTagConfidentiality" },
+                    "TagEnvironment" : { "Ref" : "RedshiftTagEnvironment" },
+                    "TagName" : { "Ref" : "RedshiftTagName" },
+                    "TagProjectCostCenter" : { "Ref" : "RedshiftTagProjectCostCenter" },
+                    "VPCID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] }
                 }
+            }
         },
+        "awsSecretRedshift" : {
+            "Type" : "AWS::SecretsManager::Secret",
+            "Properties" : {
+                "Name" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-redshift" ] ] },
+                "Description" : { "Fn::Join" : [ "" , [ "Redshift Cluster (created by DataSunrise)" ] ] },
+                "SecretString" : { "Fn::Join" : [ "" , [ "{\"username\":\"" , { "Ref" : "RedshiftMasterUserName" } , "\",\"password\":\"" , { "Ref" : "RedshiftMasterUserPassword" } , "\",\"host\":\"" , { "Fn::Select" : [ "0" , { "Fn::Split" : [ ":" , { "Fn::GetAtt" : [ "awsRedshift" , "Outputs.RedshiftClusterEndpoint" ] } ] } ] } , "\",\"port\":\"" , { "Fn::Select" : [ "1" , { "Fn::Split" : [ ":" , { "Fn::GetAtt" : [ "awsRedshift" , "Outputs.RedshiftClusterEndpoint" ] } ] } ] } , "\",\"dbname\":\"" , { "Ref" : "RedshiftDBName" } , "\"}" ] ] }
+            }
+        },                                
         "dsDBAudit" : {
             "Type" : "AWS::RDS::DBInstance",
             "Properties" : {
@@ -1032,14 +1040,14 @@
                             "Effect" : "Allow"
                         },
                         {
-                            "Action" : [ "ec2:AssociateAddress" , "ec2:DescribeAddresses" ],
+                            "Action" : [ "ec2:AssociateAddress" , "ec2:DescribeInstances" , "ec2:DescribeInstancesStatus" ],
                             "Resource" : "*",
                             "Effect" : "Allow"
                         },
                         {
                             "Effect" : "Allow",
                             "Action" : [ "secretsmanager:DescribeSecret" , "secretsmanager:GetSecretValue" , "secretsmanager:PutSecretValue", "secretsmanager:UpdateSecretVersionStage" ],
-                            "Resource" : [ { "Ref" : "dsSecretDBAudit" } , { "Ref" : "dsSecretDBDictionary" } , { "Ref" : "dsSecretLicense" } , { "Ref" : "dsSecretAdminPassword" } , { "Ref" : "dsSecretUserPassword" } ] 
+                            "Resource" : [ { "Ref" : "dsSecretDBAudit" } , { "Ref" : "dsSecretDBDictionary" } , { "Ref" : "dsSecretLicense" } , { "Ref" : "dsSecretAdminPassword" } , { "Ref" : "dsSecretUserPassword" } , { "Ref" : "awsSecretRedshift"  }] 
                         }                        
                     ]
                 },
@@ -1056,7 +1064,7 @@
         },
         "dsLaunchConfiguration" : {
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
-            "DependsOn" : [ "dsSecretAttachmentDBAudit" , "dsSecretAttachmentDBDictionary" , "dsSecretLicense" , "dsSecretAdminPassword" , "dsSecretUserPassword" ],
+            "DependsOn" : [ "dsSecretAttachmentDBAudit" , "dsSecretAttachmentDBDictionary" , "dsSecretLicense" , "dsSecretAdminPassword" , "dsSecretUserPassword" , "awsSecretRedshift" ],
             "Metadata" : {
                 "AWS::CloudFormation::Authentication" : {
                     "S3AccessClusterMember" : {
@@ -1125,14 +1133,7 @@
                     "#!/bin/bash\n",
                     "\n",
                     "export CFUD_AWS_STACK_NAME=\"",    { "Ref" : "AWS::StackName" }, "\"\n",
-                    "export CFUD_AWS_INSTANCE_TYPE=\"", "redshift", "\"\n",                    
-
-                    "export Par_InstanceHost=\"", { "Fn::Select" : [ "0", { "Fn::Split" : [":" , {"Fn::GetAtt" : [ "awsRedshift", "Outputs.RedshiftClusterEndpoint" ] }]}] }, "\"\n",
-                    "export Par_InstancePort=\"", { "Ref" : "RedshiftClusterPort" }, "\"\n",
-                    "export Par_InstanceDatabaseName=\"", { "Ref" : "RedshiftDBName" }, "\"\n",
-                    "export Par_InstanceLogin=\"", { "Ref" : "RedshiftMasterUserName" }, "\"\n",
-                    "export Par_InstancePassword=\"", { "Ref" : "RedshiftMasterUserPassword" }, "\"\n",
-                    
+                    "export CFUD_AWS_INSTANCE_TYPE=\"", "redshift", "\"\n",                                        
                     "export PATH=$PATH:/usr/local/bin\n",
                     "which pip &> /dev/null\n",
                     "if [ $? -ne 0 ] ; then\n",
