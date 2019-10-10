@@ -700,7 +700,6 @@
         "dsDBAudit" : {
             "Type" : "AWS::RDS::DBInstance",
             "Properties" : {
-                 "DBInstanceIdentifier" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-audit" ] ] },
                  "DBName" : { "Ref" : "DSAuditDBName" },
                  "Engine" : "Postgres",
                  "EngineVersion" : "11",
@@ -708,7 +707,7 @@
                  "MasterUsername" : { "Ref" : "DSAuditDBUserName" },
                  "MasterUserPassword" : { "Fn::Join" : ["", ["{{resolve:secretsmanager:",{"Ref": "dsSecretDBAudit"},":SecretString:password}}"] ] },
                  "AllocatedStorage" : { "Ref" : "DSAuditDBStorageSize" },
-                 "VPCSecurityGroups" : [ { "Ref" : "dsSecurityGroupPrivateNetwork" } ],
+                 "VPCSecurityGroups" : [ { "Ref" : "dsSecurityGroupPrivateDataSunriseCluster" } ],
                  "DBSubnetGroupName" : { "Ref" : "dsDBSubnetGroup" }
             },
             "DeletionPolicy" : "Snapshot"
@@ -737,7 +736,6 @@
         "dsDBDictionary" : {
             "Type" : "AWS::RDS::DBInstance",
             "Properties" : {
-                 "DBInstanceIdentifier" : { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" } , "-dictionary" ] ] },
                  "DBName" : { "Ref" : "DSDictionaryDBName" },
                  "Engine" : "Postgres",
                  "EngineVersion" : "11",
@@ -745,7 +743,7 @@
                  "MasterUsername" : { "Ref" : "DSDictionaryDBUserName" },
                  "MasterUserPassword" : { "Fn::Join" : ["", ["{{resolve:secretsmanager:",{"Ref": "dsSecretDBDictionary"},":SecretString:password}}"] ] },
                  "AllocatedStorage" : { "Ref" : "DSDictionaryDBStorageSize" },
-                 "VPCSecurityGroups" : [ { "Ref" : "dsSecurityGroupPrivateNetwork" } ],
+                 "VPCSecurityGroups" : [ { "Ref" : "dsSecurityGroupPrivateDataSunriseCluster" } ],
                  "DBSubnetGroupName" : { "Ref" : "dsDBSubnetGroup" }
             },
             "DeletionPolicy" : "Snapshot"
@@ -792,7 +790,7 @@
             "Properties" : {
                 "Name" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-admin-password" ] ] },
                 "Description" : "DataSunrise (admin Password)",
-                "SecretString" : { "Fn::Join" : [ "" , [ "{\"username\":\"" , "admin" , "\",\"password\":\"" , { "Ref" : "DSUserPassword" } , "\"}" ] ] }
+                "SecretString" : { "Fn::Join" : [ "" , [ "{\"username\":\"" , "admin" , "\",\"password\":\"" , { "Ref" : "DSAdminPassword" } , "\"}" ] ] }
             }
         },
         "dsSecretUserPassword" : {
