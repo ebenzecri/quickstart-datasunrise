@@ -29,8 +29,3 @@ tests:
     - us-east-2
     - us-west-1
     - us-west-2
-  ds-sa:
-    parameter_input: datasunrise-master.json
-    template_file: datasunrise-master.template
-    regions:
-    - sa-east-1

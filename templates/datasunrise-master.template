@@ -616,25 +616,6 @@
              "Type" : "String"
         }
     },
-    "Mappings" : {      
-        "RegionAMI" : {
-            "us-east-1" : { "AMI" : "ami-1853ac65" },
-            "us-east-2" : { "AMI" : "ami-25615740" },
-            "us-west-1" : { "AMI" : "ami-bf5540df" },
-            "us-west-2" : { "AMI" : "ami-d874e0a0" },
-            "ca-central-1" : { "AMI" : "ami-5b55d23f" },
-            "eu-central-1" : { "AMI" : "ami-ac442ac3" },
-            "eu-west-1" : { "AMI" : "ami-3bfab942" },
-            "eu-west-2" : { "AMI" : "ami-dff017b8" },
-            "eu-west-3" : { "AMI" : "ami-4f55e332" },
-            "ap-northeast-1" : { "AMI" : "ami-a77c30c1" },
-            "ap-northeast-2" : { "AMI" : "ami-5e1ab730" },
-            "ap-southeast-1" : { "AMI" : "ami-e2adf99e" },
-            "ap-southeast-2" : { "AMI" : "ami-43874721" },
-            "ap-south-1" : { "AMI" : "ami-7c87d913" },
-            "sa-east-1" : { "AMI" : "ami-5339733f" }
-        }
-    },
     "Conditions" : {
         "GovCloudCondition" : {
             "Fn::Equals" : [ { "Ref" : "AWS::Region" } , "us-gov-west-1" ]
