@@ -21,10 +21,16 @@ global:
   reporting: true
  
 tests:
-  qs-ds-ww:
-    parameter_input: quickstart-datasunrise-parameters.json
-    template_file: quickstart-datasunrise.template
+  ds-us:
+    parameter_input: datasunrise-master.json
+    template_file: datasunrise-master.template
     regions:
-    - ap-south-1
-    - sa-east-1
     - us-east-1
+    - us-east-2
+    - us-west-1
+    - us-west-2
+  ds-sa:
+    parameter_input: datasunrise-master.json
+    template_file: datasunrise-master.template
+    regions:
+    - sa-east-1
