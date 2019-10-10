@@ -696,7 +696,7 @@
                     "RedshiftTagEnvironment" : { "Ref" : "RedshiftTagEnvironment" },
                     "RedshiftTagName" : { "Ref" : "RedshiftTagName" },
                     "RedshiftTagProjectCostCenter" : { "Ref" : "RedshiftTagProjectCostCenter" },
-                    "RedshiftTagConfidentiality" : { "Ref" : "RedshiftTagName" },
+                    "RedshiftTagConfidentiality" : { "Ref" : "RedshiftTagConfidentiality" },
                     "RedshiftTagCompliance" : { "Ref" : "RedshiftTagCompliance" },
                     "RedshiftClusterPort" : { "Ref" : "RedshiftClusterPort" },
                     "RedshiftEnableLoggingToS3" : { "Ref" : "RedshiftEnableLoggingToS3" },
