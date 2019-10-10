@@ -21,11 +21,24 @@ global:
   reporting: true
  
 tests:
+  ds-ca:
+    parameter_input: datasunrise-master.json
+    template_file: datasunrise-master.template
+    regions:
+      - ca-central-1
+  ds-sa:
+    parameter_input: datasunrise-master.json
+    template_file: datasunrise-master.template
+    regions:
+      - sa-east-1      
   ds-us:
     parameter_input: datasunrise-master.json
     template_file: datasunrise-master.template
     regions:
+    - eu-west-1
+    - eu-west-2
+    - eu-west-3
     - us-east-1
     - us-east-2
     - us-west-1
-    - us-west-2
+    - us-west-2            
