@@ -1035,10 +1035,7 @@
                             },
                             "datasunrise-restart-sshd" : {
                                 "command" :  "service sshd restart"
-                            },
-                            "datasunrise-bootstrap-clean" : {
-                                "command" :  "rm -f /tmp/datasunrise_bootstrap.sh"
-                            }                            
+                            }                           
                         }                                
                     }
                 }
