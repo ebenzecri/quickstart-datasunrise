@@ -738,17 +738,17 @@
             "Description" : "DataSunrise Security Group (Private Network)",
             "Value" : { "Fn::GetAtt" : [ "dsDataSunriseCluster" , "Outputs.SecurityGroupPrivateNetwork" ] }
         },
-        "LicenseSecret" : {
+        "SecretLicense" : {
             "Description" : "DataSunrise License (Secret)",
-            "Value" : { "Fn::GetAtt" : [ "dsDataSunriseCluster" , "Outputs.LicenseSecret" ] }
+            "Value" : { "Fn::GetAtt" : [ "dsDataSunriseCluster" , "Outputs.SecretLicense" ] }
         },
-        "AuditDBSecret" : {
+        "SecretAuditDB" : {
             "Description" : "DataSunrise Audit Database (Secret)",
-            "Value" : { "Fn::GetAtt" : [ "dsDataSunriseCluster" , "Outputs.AuditDBSecret" ] }
+            "Value" : { "Fn::GetAtt" : [ "dsDataSunriseCluster" , "Outputs.SecretAuditDB" ] }
         },
-        "DictionaryDBSecret" : {
+        "SecretDictionaryDB" : {
             "Description" : "DataSunrise Dictionary Database (Secret)",
-            "Value" : { "Fn::GetAtt" : [ "dsDataSunriseCluster" , "Outputs.DictionaryDBSecret" ] }
+            "Value" : { "Fn::GetAtt" : [ "dsDataSunriseCluster" , "Outputs.SecretDictionaryDB" ] }
         },
         "SecretAdminPassword" : {
             "Description" : "DataSunrise Admin Password (Secret)",

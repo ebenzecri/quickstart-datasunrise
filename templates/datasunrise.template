@@ -743,7 +743,7 @@
                  "MasterUsername" : { "Ref" : "DSDictionaryDBUserName" },
                  "MasterUserPassword" : { "Fn::Join" : ["", ["{{resolve:secretsmanager:",{"Ref": "dsSecretDBDictionary"},":SecretString:password}}"] ] },
                  "AllocatedStorage" : { "Ref" : "DSDictionaryDBStorageSize" },
-                 "VPCSecurityGroups" : [ { "Ref" : "dsSecurityGroupPrivateDataSunriseCluster" } ],
+                 "VPCSecurityGroups" : [ { "Ref" : "dsSecurityGroupPrivateDataSunriseDBs" } ],
                  "DBSubnetGroupName" : { "Ref" : "dsDBSubnetGroup" }
             },
             "DeletionPolicy" : "Snapshot"
@@ -801,6 +801,29 @@
                 "SecretString" : { "Fn::Join" : [ "" , [ "{\"username\":\"" , { "Ref" : "DSUserName" } , "\",\"password\":\"" , { "Ref" : "DSUserPassword" } , "\",\"email\":\"" , { "Ref" : "DSUserEmail" } , "\"}" ] ] }
             }
         },
+        "dsSecurityGroupPrivateDataSunriseDBs" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "GroupDescription" : "DataSunrise Security Group (Audit + Dictionary)",
+                "VpcId" : { "Ref" : "VPCID" },
+                "SecurityGroupIngress" : [
+                    {
+                        "IpProtocol" : "icmp",
+                        "FromPort" : 8,
+                        "ToPort" : -1,
+                        "SourceSecurityGroupId" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateDataSunriseCluster", "GroupId" ] },                             
+                        "Description" : "Allow ICMP protocol from DataSunrise Cluster Security Group"
+                    },
+                    {
+                         "IpProtocol" : "tcp",
+                         "FromPort" : 5432,
+                         "ToPort" : 5432,
+                         "SourceSecurityGroupId" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateDataSunriseCluster", "GroupId" ] },                             
+                         "Description" : "Allow access to audit and dictionary instances from DataSunrise Cluster Security Group"
+                     }                         
+                ]
+            }
+         },        
         "dsSecurityGroupPrivateDataSunriseCluster" : {
            "Type" : "AWS::EC2::SecurityGroup",
            "Properties" : {
@@ -827,14 +850,7 @@
                         "ToPort" : { "Ref" : "RedshiftClusterPort" },
                         "SourceSecurityGroupId" : { "Fn::GetAtt" : [ "dsSecurityGroupPublicLoadBalancer", "GroupId" ] },     
                         "Description" : "Allow access to Redshift cluster from Public Load Balancer Security Group"
-                    },  
-                    {
-                        "IpProtocol" : "tcp",
-                        "FromPort" : 5432,
-                        "ToPort" : 5432,
-                        "SourceSecurityGroupId" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateNetwork", "GroupId" ] },                             
-                        "Description" : "Allow access to audit and dictionary instances from Private Subnet Group"
-                    },                         
+                    },                           
                     {
                         "IpProtocol" : "tcp",
                         "FromPort" : { "Ref" : "RedshiftClusterPort" },
@@ -854,17 +870,8 @@
                         "FromPort" : 11001,
                         "ToPort" : 11010,
                         "SourceSecurityGroupId" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateNetwork", "GroupId" ] },
-                        "Description" : "Allow database instances connections from Private Subnet Group"
+                        "Description" : "Allow proxy connections from Private Subnet Group"
                     }
-               ],
-               "SecurityGroupEgress" : [
-                    {
-                        "IpProtocol" : "tcp",
-                        "FromPort" : 0,
-                        "ToPort" : 65535,
-                        "CidrIp" : "0.0.0.0/0",
-                        "Description" : "Allow all outbound traffic"
-                    }         
                ]
            }
         },
@@ -1028,7 +1035,10 @@
                             },
                             "datasunrise-restart-sshd" : {
                                 "command" :  "service sshd restart"
-                            }                                                                                                                                                     
+                            },
+                            "datasunrise-bootstrap-clean" : {
+                                "command" :  "rm -f /tmp/datasunrise_bootstrap.sh"
+                            }                            
                         }                                
                     }
                 }
@@ -1176,15 +1186,15 @@
             "Description" : "DataSunrise Security Group (Private Network)",
             "Value" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateNetwork" , "GroupId" ] }
         },
-        "LicenseSecret" : {
+        "SecretLicense" : {
             "Description" : "DataSunrise License (Secret)",
             "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-license" ] ] }
         },
-        "AuditDBSecret" : {
+        "SecretAuditDB" : {
             "Description" : "DataSunrise Audit Database (Secret)",
             "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-audit" ] ] }
         },
-        "DictionaryDBSecret" : {
+        "SecretDictionaryDB" : {
             "Description" : "DataSunrise Dictionary Database (Secret)",
             "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-dictionary" ] ] }
         },
