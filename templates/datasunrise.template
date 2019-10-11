@@ -1,19 +1,17 @@
 {
     "AWSTemplateFormatVersion" : "2010-09-09",
-    "Description" : "DataSunrise Cluster for Amazon Web Services (+ VPC + Linux Bastion + Redshift)",
+    "Description" : "DataSunrise Cluster for Amazon Web Services (+ Linux Bastion + Redshift)",
     "Metadata" : {
         "AWS::CloudFormation::Interface" : {
             "ParameterGroups" : [
                 {
                     "Label" : { "default" : "Amazon VPC: basic configuration" },
                     "Parameters" : [
-                        "VPCAvailabilityZones",
-                        "VPCCIDR",
-                        "VPCPrivateSubnet1CIDR",
-                        "VPCPrivateSubnet2CIDR",
-                        "VPCPublicSubnet1CIDR",
-                        "VPCPublicSubnet2CIDR",
-                        "VPCTenancy",
+                        "VPCID",
+                        "VPCPrivateSubnet1ID",
+                        "VPCPrivateSubnet2ID",
+                        "VPCPublicSubnet1ID",
+                        "VPCPublicSubnet2ID",
                         "VPCRemoteAccessCIDR"
                     ]
                 },
@@ -233,30 +231,24 @@
                 "RedshiftTagProjectCostCenter" : {
                     "default" : "Project cost center"
                 },
-                "VPCAvailabilityZones" : {
-                    "default" : "Availability Zones"
+                "VPCID" : {
+                    "default" : "VPC ID"
                 },
-                "VPCCIDR" : {
-                    "default" : "VPC CIDR"
+                "VPCPrivateSubnet1ID" : {
+                    "default" : "Private subnet 1 ID"
                 },
-                "VPCPrivateSubnet1CIDR" : {
-                    "default" : "Private subnet 1A CIDR"
+                "VPCPrivateSubnet2ID" : {
+                    "default" : "Private subnet 2 ID"
                 },
-                "VPCPrivateSubnet2CIDR" : {
-                    "default" : "Private subnet 2A CIDR"
+                "VPCPublicSubnet1ID" : {
+                    "default" : "Public subnet 1 ID"
                 },
-                "VPCPublicSubnet1CIDR" : {
-                    "default" : "Public subnet 1 CIDR"
-                },
-                "VPCPublicSubnet2CIDR" : {
-                    "default" : "Public subnet 2 CIDR"
+                "VPCPublicSubnet2ID" : {
+                    "default" : "Public subnet 2 ID"
                 },
                 "VPCRemoteAccessCIDR" : {
                     "default" : "Allowed external access CIDR"
-                },                
-                "VPCTenancy" : {
-                    "default" : "VPC tenancy"
-                }
+                }                
             }
         }
     },
@@ -563,58 +555,32 @@
             "Default" : "12345",
             "Description" : "Cost center associated to the cluster",
             "Type" : "String"
-        },
-        "VPCAvailabilityZones" : {
-            "AllowedPattern" : ".+",
-            "Description" : "Two availability zones to be used for the subnets in the VPC. The logical order will be preserved",
-            "Type" : "List<AWS::EC2::AvailabilityZone::Name>"
         },        
-        "VPCCIDR" : {
-            "AllowedPattern" : "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
-            "ConstraintDescription" : "CIDR block parameter must be in the form x.x.x.x/16-28",
-            "Default" : "10.0.0.0/16",
-            "Description" : "CIDR Block for the VPC",
-            "Type" : "String"
+        "VPCID" : {
+            "Description" : "ID of your existing VPC you want to use for deploying DataSunrise into",
+            "Type" : "AWS::EC2::VPC::Id"
        },        
-        "VPCPrivateSubnet1CIDR" : {
-            "AllowedPattern" : "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
-            "ConstraintDescription" : "CIDR block parameter must be in the form x.x.x.x/16-28",
-            "Default" : "10.0.0.0/19",
-            "Description" : "CIDR block for private subnet 1 located in availability zone 1",
-            "Type" : "String"
+        "VPCPrivateSubnet1ID" : {
+            "Description" : "ID of the private subnet in Availability Zone 1 in your existing VPC",
+            "Type" : "AWS::EC2::Subnet::Id"
         },
-        "VPCPrivateSubnet2CIDR" : {
-            "AllowedPattern" : "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
-            "ConstraintDescription" : "CIDR block parameter must be in the form x.x.x.x/16-28",
-            "Default" : "10.0.32.0/19",
-            "Description" : "CIDR block for private subnet 1 located in availability zone 2",
-            "Type" : "String"
+        "VPCPrivateSubnet2ID" : {
+            "Description" : "ID of the private subnet in Availability Zone 2 in your existing VPC",
+            "Type" : "AWS::EC2::Subnet::Id"
         },
-        "VPCPublicSubnet1CIDR" : {
-            "AllowedPattern" : "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
-            "ConstraintDescription" : "CIDR block parameter must be in the form x.x.x.x/16-28",
-            "Default" : "10.0.128.0/20",
-            "Description" : "CIDR Block for the public DMZ subnet 1 located in availability zone 1",
-            "Type" : "String"
+        "VPCPublicSubnet1ID" : {
+            "Description" : "ID of the public subnet in Availability Zone 1 in your existing VPC",
+            "Type" : "AWS::EC2::Subnet::Id"
         },
-        "VPCPublicSubnet2CIDR" : {
-            "AllowedPattern" : "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
-            "ConstraintDescription" : "CIDR block parameter must be in the form x.x.x.x/16-28",
-            "Default" : "10.0.144.0/20",
-            "Description" : "CIDR Block for the public DMZ subnet 2 located in availability zone 2",
-            "Type" : "String"
+        "VPCPublicSubnet2ID" : {
+            "Description" : "ID of the public subnet in Availability Zone 2 in your existing VPC",
+            "Type" : "AWS::EC2::Subnet::Id"
         },
         "VPCRemoteAccessCIDR" : {
             "AllowedPattern" : "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$",
             "ConstraintDescription" : "CIDR block parameter must be in the form x.x.x.x/x",
             "Description" : "Allowed CIDR block for external access. If you want to allow external access from everywhere use 0.0.0.0/0",
             "Type" : "String"
-        },                
-        "VPCTenancy" : {
-             "AllowedValues" : [ "default" , "dedicated" ],
-             "Default" : "default",
-             "Description" : "Allowed tenancy of instances launched into the VPC",
-             "Type" : "String"
         }
     },
     "Mappings" : {      
@@ -642,32 +608,6 @@
         }
     },
     "Resources" : {
-        "awsVPC" : {
-            "Type" : "AWS::CloudFormation::Stack",
-            "Properties" : {
-                "TemplateURL" : {
-                    "Fn::Sub" : [
-                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template",
-                        {
-                            "QSS3Region" : {
-                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
-                            }
-                        }
-                    ]
-                },
-                "Parameters" : {
-                    "AvailabilityZones" : { "Fn::Join" : [ "," , { "Ref" : "VPCAvailabilityZones" } ] },
-                    "KeyPairName" : { "Ref" : "DSClusterMemberKeyPair" },
-                    "NumberOfAZs" : "2",
-                    "PrivateSubnet1ACIDR" : { "Ref" : "VPCPrivateSubnet1CIDR" },
-                    "PrivateSubnet2ACIDR" : { "Ref" : "VPCPrivateSubnet2CIDR" },
-                    "PublicSubnet1CIDR" : { "Ref" : "VPCPublicSubnet1CIDR" },
-                    "PublicSubnet2CIDR" : { "Ref" : "VPCPublicSubnet2CIDR" },
-                    "VPCCIDR" : { "Ref" : "VPCCIDR" },
-                    "VPCTenancy" : { "Ref" : "VPCTenancy" }
-                }
-            }
-        },
         "awsLinuxBastion" : {
             "Type" : "AWS::CloudFormation::Stack",
             "Properties" : {
@@ -694,16 +634,16 @@
                         ]
                     },
                     "BastionInstanceType" : "t2.micro",
-                    "BastionTenancy" : { "Ref" : "VPCTenancy" },
+                    "BastionTenancy" : "default",
                     "EnableBanner" : "false",
                     "EnableTCPForwarding" : "false",
                     "EnableX11Forwarding" : "false",
                     "KeyPairName" : { "Ref" : "LinuxBastionKeyPair" },
                     "NumBastionHosts" : "1",
-                    "PublicSubnet1ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PublicSubnet1ID" ] },
-                    "PublicSubnet2ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PublicSubnet2ID" ] },
+                    "PublicSubnet1ID" : { "Ref" : "VPCPublicSubnet1ID" },
+                    "PublicSubnet2ID" : { "Ref" : "VPCPublicSubnet2ID" },
                     "RemoteAccessCIDR" : { "Ref" : "VPCRemoteAccessCIDR" },
-                    "VPCID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] }
+                    "VPCID" : { "Ref" : "VPCID" }
                 }
             }
         },
@@ -734,18 +674,18 @@
                     "NotificationList" : { "Ref" : "DSAdminEmail" },
                     "NumberOfNodes" : { "Ref" : "RedshiftNodesNumber" },
                     "RedshiftClusterPort" : { "Ref" : "RedshiftClusterPort" },
-                    "RemoteAccessCIDR" : { "Ref" : "VPCCIDR" },
+                    "RemoteAccessCIDR" : { "Ref" : "VPCRemoteAccessCIDR" },
                     "S3BucketForRedshiftIAMRole" : { "Ref" : "RedshiftS3BucketForRedshiftIAMRole" },
                     "SnapshotAccountNumber" : "",
                     "SnapshotIdentifier" : "",
-                    "Subnet1ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PrivateSubnet1AID" ] },
-                    "Subnet2ID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.PrivateSubnet2AID" ] },
+                    "Subnet1ID" : { "Ref" : "VPCPrivateSubnet1ID" },
+                    "Subnet2ID" : { "Ref" : "VPCPrivateSubnet2ID" },
                     "TagCompliance" : { "Ref" : "RedshiftTagCompliance" },
                     "TagConfidentiality" : { "Ref" : "RedshiftTagConfidentiality" },
                     "TagEnvironment" : { "Ref" : "RedshiftTagEnvironment" },
                     "TagName" : { "Ref" : "RedshiftTagName" },
                     "TagProjectCostCenter" : { "Ref" : "RedshiftTagProjectCostCenter" },
-                    "VPCID" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] }
+                    "VPCID" : { "Ref" : "VPCID" }
                 }
             }
         },
@@ -760,7 +700,6 @@
         "dsDBAudit" : {
             "Type" : "AWS::RDS::DBInstance",
             "Properties" : {
-                 "DBInstanceIdentifier" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-audit" ] ] },
                  "DBName" : { "Ref" : "DSAuditDBName" },
                  "Engine" : "Postgres",
                  "EngineVersion" : "11",
@@ -768,7 +707,7 @@
                  "MasterUsername" : { "Ref" : "DSAuditDBUserName" },
                  "MasterUserPassword" : { "Fn::Join" : ["", ["{{resolve:secretsmanager:",{"Ref": "dsSecretDBAudit"},":SecretString:password}}"] ] },
                  "AllocatedStorage" : { "Ref" : "DSAuditDBStorageSize" },
-                 "VPCSecurityGroups" : [{ "Ref" : "dsSecurityGroupPrivateNetwork" }],
+                 "VPCSecurityGroups" : [ { "Ref" : "dsSecurityGroupPrivateDataSunriseCluster" } ],
                  "DBSubnetGroupName" : { "Ref" : "dsDBSubnetGroup" }
             },
             "DeletionPolicy" : "Snapshot"
@@ -797,7 +736,6 @@
         "dsDBDictionary" : {
             "Type" : "AWS::RDS::DBInstance",
             "Properties" : {
-                 "DBInstanceIdentifier" : { "Fn::Join" : [ "", [ { "Ref" : "AWS::StackName" } , "-dictionary" ] ] },
                  "DBName" : { "Ref" : "DSDictionaryDBName" },
                  "Engine" : "Postgres",
                  "EngineVersion" : "11",
@@ -805,7 +743,7 @@
                  "MasterUsername" : { "Ref" : "DSDictionaryDBUserName" },
                  "MasterUserPassword" : { "Fn::Join" : ["", ["{{resolve:secretsmanager:",{"Ref": "dsSecretDBDictionary"},":SecretString:password}}"] ] },
                  "AllocatedStorage" : { "Ref" : "DSDictionaryDBStorageSize" },
-                 "VPCSecurityGroups" : [{ "Ref" : "dsSecurityGroupPrivateNetwork" }],
+                 "VPCSecurityGroups" : [ { "Ref" : "dsSecurityGroupPrivateDataSunriseDBs" } ],
                  "DBSubnetGroupName" : { "Ref" : "dsDBSubnetGroup" }
             },
             "DeletionPolicy" : "Snapshot"
@@ -836,7 +774,7 @@
             "Properties" : {
                 "DBSubnetGroupDescription" : "RDS Subnet Group for DataSunrise (Audit + Dictionary)",
                 "DBSubnetGroupName" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-db-subnet-group" ] ] },
-                "SubnetIds" :  [ { "Fn::GetAtt" : [ "awsVPC" , "Outputs.PrivateSubnet1AID" ] } , { "Fn::GetAtt" : [ "awsVPC" , "Outputs.PrivateSubnet2AID" ] } ]
+                "SubnetIds" :  [ { "Ref" : "VPCPrivateSubnet1ID" } , { "Ref" : "VPCPrivateSubnet2ID" } ]
             }
         },
         "dsSecretLicense" : {
@@ -852,7 +790,7 @@
             "Properties" : {
                 "Name" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-admin-password" ] ] },
                 "Description" : "DataSunrise (admin Password)",
-                "SecretString" : { "Fn::Join" : [ "" , [ "{\"username\":\"" , "admin" , "\",\"password\":\"" , { "Ref" : "DSUserPassword" } , "\"}" ] ] }
+                "SecretString" : { "Fn::Join" : [ "" , [ "{\"username\":\"" , "admin" , "\",\"password\":\"" , { "Ref" : "DSAdminPassword" } , "\"}" ] ] }
             }
         },
         "dsSecretUserPassword" : {
@@ -862,12 +800,35 @@
                 "Description" : { "Fn::Join" : [ "" , [ "DataSunrise (" , { "Ref" : "DSUserName" } , " Password)" ] ] },
                 "SecretString" : { "Fn::Join" : [ "" , [ "{\"username\":\"" , { "Ref" : "DSUserName" } , "\",\"password\":\"" , { "Ref" : "DSUserPassword" } , "\",\"email\":\"" , { "Ref" : "DSUserEmail" } , "\"}" ] ] }
             }
-        },                                                                 
-        "dsSecurityGroupPrivateNetwork" : {
+        },
+        "dsSecurityGroupPrivateDataSunriseDBs" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "GroupDescription" : "DataSunrise Security Group (Audit + Dictionary)",
+                "VpcId" : { "Ref" : "VPCID" },
+                "SecurityGroupIngress" : [
+                    {
+                        "IpProtocol" : "icmp",
+                        "FromPort" : 8,
+                        "ToPort" : -1,
+                        "SourceSecurityGroupId" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateDataSunriseCluster", "GroupId" ] },                             
+                        "Description" : "Allow ICMP protocol from DataSunrise Cluster Security Group"
+                    },
+                    {
+                         "IpProtocol" : "tcp",
+                         "FromPort" : 5432,
+                         "ToPort" : 5432,
+                         "SourceSecurityGroupId" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateDataSunriseCluster", "GroupId" ] },                             
+                         "Description" : "Allow access to audit and dictionary instances from DataSunrise Cluster Security Group"
+                     }                         
+                ]
+            }
+         },        
+        "dsSecurityGroupPrivateDataSunriseCluster" : {
            "Type" : "AWS::EC2::SecurityGroup",
            "Properties" : {
-               "GroupDescription" : "DataSunrise Security Group (Private Network)",
-               "VpcId" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] },
+               "GroupDescription" : "DataSunrise Security Group (Cluster)",
+               "VpcId" : { "Ref" : "VPCID" },
                "SecurityGroupIngress" : [
                     {
                         "IpProtocol" : "tcp",
@@ -888,73 +849,29 @@
                         "FromPort" : { "Ref" : "RedshiftClusterPort" },
                         "ToPort" : { "Ref" : "RedshiftClusterPort" },
                         "SourceSecurityGroupId" : { "Fn::GetAtt" : [ "dsSecurityGroupPublicLoadBalancer", "GroupId" ] },     
-                        "Description" : "Allow access to Redshift Cluster from Public Load Balancer Security Group"
-                    },  
-                    {
-                        "IpProtocol" : "tcp",
-                        "FromPort" : 5432,
-                        "ToPort" : 5432,
-                        "CidrIp" : { "Ref" : "VPCPrivateSubnet1CIDR" },
-                        "Description" : "Allow access to Audit and Dictionary PostgreSQL RDS Instances from Private Subnet 1"
-                    },   
-                    {
-                        "IpProtocol" : "tcp",
-                        "FromPort" : 5432,
-                        "ToPort" : 5432,
-                        "CidrIp" : { "Ref" : "VPCPrivateSubnet2CIDR" },
-                        "Description" : "Allow access to Audit and Dictionary PostgreSQL RDS Instances from Private Subnet 2"
-                    },                       
+                        "Description" : "Allow access to Redshift cluster from Public Load Balancer Security Group"
+                    },                           
                     {
                         "IpProtocol" : "tcp",
                         "FromPort" : { "Ref" : "RedshiftClusterPort" },
                         "ToPort" : { "Ref" : "RedshiftClusterPort" },
-                        "CidrIp" : { "Ref" : "VPCPrivateSubnet1CIDR" },
-                        "Description" : "Allow access to Redshift Cluster from Private Subnet 1"
+                        "SourceSecurityGroupId" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateNetwork", "GroupId" ] },
+                        "Description" : "Allow access to Redshift cluster from Private Subnet Group"
                     },                                            
                     {
                         "IpProtocol" : "tcp",
-                        "FromPort" : { "Ref" : "RedshiftClusterPort" },
-                        "ToPort" : { "Ref" : "RedshiftClusterPort" },
-                        "CidrIp" : { "Ref" : "VPCPrivateSubnet2CIDR" },
-                        "Description" : "Allow access to Redshift Cluster from Private Subnet 2"
-                    },                      
-                    {
-                        "IpProtocol" : "tcp",
                         "FromPort" : 11000,
                         "ToPort" : 11000,
-                        "CidrIp" : { "Ref" : "VPCPrivateSubnet1CIDR" },
-                        "Description" : "Allow web console access from Private Subnet 1 CIDR"
-                    },
-                    {
-                        "IpProtocol" : "tcp",
-                        "FromPort" : 11000,
-                        "ToPort" : 11000,
-                        "CidrIp" : { "Ref" : "VPCPrivateSubnet2CIDR" },
-                        "Description" : "Allow web console access from Private Subnet 2 CIDR"
+                        "SourceSecurityGroupId" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateNetwork", "GroupId" ] },
+                        "Description" : "Allow web console access from Private Subnet Group"
                     },
                     {
                         "IpProtocol" : "tcp",
                         "FromPort" : 11001,
                         "ToPort" : 11010,
-                        "CidrIp" : { "Ref" : "VPCPrivateSubnet1CIDR" },
-                        "Description" : "Allow inter-instance connections from Private Subnet 1 CIDR"
-                    },
-                    {
-                        "IpProtocol" : "tcp",
-                        "FromPort" : 11001,
-                        "ToPort" : 11010,
-                        "CidrIp" : { "Ref" : "VPCPrivateSubnet2CIDR" },
-                        "Description" : "Allow inter-instance connections from Private Subnet 2 CIDR"
+                        "SourceSecurityGroupId" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateNetwork", "GroupId" ] },
+                        "Description" : "Allow proxy connections from Private Subnet Group"
                     }
-               ],
-               "SecurityGroupEgress" : [
-                    {
-                        "IpProtocol" : "tcp",
-                        "FromPort" : 0,
-                        "ToPort" : 65535,
-                        "CidrIp" : "0.0.0.0/0",
-                        "Description" : "Allow all outbound traffic"
-                    }         
                ]
            }
         },
@@ -962,7 +879,7 @@
             "Type" : "AWS::EC2::SecurityGroup",
             "Properties" : {
                 "GroupDescription" : "DataSunrise Security Group (Public Load Balancer)",
-                "VpcId" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] },
+                "VpcId" : { "Ref" : "VPCID" },
                 "SecurityGroupIngress" : [
                     {
                         "IpProtocol" : "tcp",
@@ -975,15 +892,8 @@
                         "IpProtocol" : "tcp",
                         "FromPort" : { "Ref" : "RedshiftClusterPort" },
                         "ToPort" : { "Ref" : "RedshiftClusterPort" },
-                        "CidrIp" : { "Ref" : "VPCPrivateSubnet1CIDR" },
-                        "Description" : "Allow access to Redshift Cluster from Private Subnet 1"
-                    },                                            
-                    {
-                        "IpProtocol" : "tcp",
-                        "FromPort" : { "Ref" : "RedshiftClusterPort" },
-                        "ToPort" : { "Ref" : "RedshiftClusterPort" },
-                        "CidrIp" : { "Ref" : "VPCPrivateSubnet2CIDR" },
-                        "Description" : "Allow access to Redshift Cluster from Private Subnet 2"
+                        "SourceSecurityGroupId" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateNetwork", "GroupId" ] },
+                        "Description" : "Allow access to Redshift Cluster from Private Subnet Group"
                     }
                 ]
             }
@@ -992,9 +902,16 @@
             "Type" : "AWS::EC2::SecurityGroup",
             "Properties" : {
                 "GroupDescription" : "DataSunrise Security Group (Public Network)",
-                "VpcId" : { "Fn::GetAtt" : [ "awsVPC", "Outputs.VPCID" ] }
+                "VpcId" : { "Ref" : "VPCID" }
             }
         },
+        "dsSecurityGroupPrivateNetwork" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "GroupDescription" : "DataSunrise Security Group (Private Network)",
+                "VpcId" : { "Ref" : "VPCID" }
+            }
+        },                                                                         
         "dsClusterMemberRole" : {
             "Type" : "AWS::IAM::Role",
             "Properties" : {
@@ -1118,7 +1035,7 @@
                             },
                             "datasunrise-restart-sshd" : {
                                 "command" :  "service sshd restart"
-                            }                                                                                                                                                     
+                            }                           
                         }                                
                     }
                 }
@@ -1126,7 +1043,7 @@
             "Properties" : {
                 "ImageId" : { "Fn::FindInMap" : [ "RegionAMI", { "Ref" : "AWS::Region" } , "AMI" ] },
                 "InstanceType" : { "Ref" : "DSClusterMemberInstanceType" },
-                "SecurityGroups" : [{ "Ref" : "dsSecurityGroupPrivateNetwork" }],
+                "SecurityGroups" : [{ "Ref" : "dsSecurityGroupPrivateDataSunriseCluster" }],
                 "KeyName" : { "Ref" : "DSClusterMemberKeyPair" },
                 "IamInstanceProfile" : { "Fn::GetAtt" : [ "dsClusterMemberProfile", "Arn" ] },
                 "UserData" : { "Fn::Base64" : { "Fn::Join" : [ "", [
@@ -1171,7 +1088,7 @@
             "Properties" : {
                 "Scheme" : "internet-facing",
                 "SecurityGroups" : [{ "Ref" : "dsSecurityGroupPublicLoadBalancer" }],
-                "Subnets" : [ { "Fn::GetAtt" : [ "awsVPC", "Outputs.PublicSubnet1ID" ] }, { "Fn::GetAtt" : [ "awsVPC", "Outputs.PublicSubnet2ID" ] } ],
+                "Subnets" : [ { "Ref" : "VPCPublicSubnet1ID" } , { "Ref" : "VPCPrivateSubnet2ID" } ],
                 "CrossZone" : true,
                 "ConnectionSettings" : {
                     "IdleTimeout" : 120
@@ -1211,7 +1128,7 @@
                 "LoadBalancerNames" : [ { "Ref" : "dsLoadBalancerPublic" } ],
                 "MinSize" : { "Ref" : "DSClusterMinimumSize" },
                 "MaxSize" : { "Ref" : "DSClusterMaximumSize" },
-                "VPCZoneIdentifier" : [ { "Fn::GetAtt" : [ "awsVPC", "Outputs.PrivateSubnet1AID" ] }, { "Fn::GetAtt" : [ "awsVPC", "Outputs.PrivateSubnet2AID" ] } ],
+                "VPCZoneIdentifier" : [ { "Ref" : "VPCPrivateSubnet1ID" } , { "Ref" : "VPCPrivateSubnet2ID" } ],
                 "Cooldown" : "300",
                 "HealthCheckType" : "ELB",
                 "HealthCheckGracePeriod" : 600,
@@ -1238,47 +1155,51 @@
         }
     },
     "Outputs" : {
-        "awsLinuxBastionPublicIP" : {
+        "LinuxBastionPublicIP" : {
             "Description" : "Linux Bastion Public IP",
             "Value" : { "Fn::GetAtt" : [ "awsLinuxBastion" , "Outputs.EIP1" ] }
         },
-        "dsClusterWebConsole" : {
+        "ClusterWebConsole" : {
             "Description" : "DataSunrise Web Console",
             "Value" : { "Fn::Join" : [ "" , [ "https://" , { "Fn::GetAtt" : [ "dsLoadBalancerPublic" , "DNSName" ] } , ":11000/v2" ] ] }
         },
-        "awsLinuxBastionSecurityGroup" : {
+        "LinuxBastionSecurityGroup" : {
             "Description" : "Linux Bastion Security Group",
             "Value" : { "Fn::GetAtt" : [ "awsLinuxBastion" , "Outputs.BastionSecurityGroupID" ] }
         },  
-        "dsSecurityGroupPublicLoadBalancer" : {
+        "SecurityGroupPublicLoadBalancer" : {
             "Description" : "DataSunrise Security Group (Public Load Balancer)",
             "Value" : { "Fn::GetAtt" : [ "dsSecurityGroupPublicLoadBalancer" , "GroupId" ] }
         },
-        "dsSecurityGroupPublicNetwork" : {
+        "SecurityGroupPublicNetwork" : {
             "Description" : "DataSunrise Security Group (Public Network)",
             "Value" : { "Fn::GetAtt" : [ "dsSecurityGroupPublicNetwork" , "GroupId" ] }
         },
-        "dsSecurityGroupPrivateNetwork" : {
+        "SecurityGroupPrivateDataSunriseCluster" : {
+            "Description" : "DataSunrise Security Group (Cluster)",
+            "Value" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateDataSunriseCluster" , "GroupId" ] }            
+        },
+        "SecurityGroupPrivateNetwork" : {
             "Description" : "DataSunrise Security Group (Private Network)",
             "Value" : { "Fn::GetAtt" : [ "dsSecurityGroupPrivateNetwork" , "GroupId" ] }
         },
-        "dsLicenseSecret" : {
+        "SecretLicense" : {
             "Description" : "DataSunrise License (Secret)",
             "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-license" ] ] }
         },
-        "dsAuditDBSecret" : {
+        "SecretAuditDB" : {
             "Description" : "DataSunrise Audit Database (Secret)",
             "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-audit" ] ] }
         },
-        "dsDictionaryDBSecret" : {
+        "SecretDictionaryDB" : {
             "Description" : "DataSunrise Dictionary Database (Secret)",
             "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-dictionary" ] ] }
         },
-        "dsSecretAdminPassword" : {
+        "SecretAdminPassword" : {
             "Description" : "DataSunrise Admin Password (Secret)",
             "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-admin-password" ] ] }
         },
-        "dsSecretUserPassword" : {
+        "SecretUserPassword" : {
             "Description" : "DataSunrise User Password (Secret)",
             "Value" : { "Fn::Join" : [ "" , [ { "Ref" : "AWS::StackName" } , "-secret-user-password" ] ] }
         },        
