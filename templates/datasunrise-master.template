@@ -734,6 +734,10 @@
             "Description" : "DataSunrise Security Group (Public Network)",
             "Value" : { "Fn::GetAtt" : [ "dsDataSunriseCluster" , "Outputs.SecurityGroupPublicNetwork" ] }
         },
+        "SecurityGroupPrivateDataSunriseCluster" : {
+            "Description" : "DataSunrise Security Group (Cluster)",
+            "Value" : { "Fn::GetAtt" : [ "dsDataSunriseCluster" , "Outputs.SecurityGroupPrivateDataSunriseCluster" ] }            
+        },        
         "SecurityGroupPrivateNetwork" : {
             "Description" : "DataSunrise Security Group (Private Network)",
             "Value" : { "Fn::GetAtt" : [ "dsDataSunriseCluster" , "Outputs.SecurityGroupPrivateNetwork" ] }
