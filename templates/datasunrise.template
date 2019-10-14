@@ -707,7 +707,7 @@
                  "MasterUsername" : { "Ref" : "DSAuditDBUserName" },
                  "MasterUserPassword" : { "Fn::Join" : ["", ["{{resolve:secretsmanager:",{"Ref": "dsSecretDBAudit"},":SecretString:password}}"] ] },
                  "AllocatedStorage" : { "Ref" : "DSAuditDBStorageSize" },
-                 "VPCSecurityGroups" : [ { "Ref" : "dsSecurityGroupPrivateDataSunriseCluster" } ],
+                 "VPCSecurityGroups" : [ { "Ref" : "dsSecurityGroupPrivateDataSunriseDBs" } ],
                  "DBSubnetGroupName" : { "Ref" : "dsDBSubnetGroup" }
             },
             "DeletionPolicy" : "Snapshot"
