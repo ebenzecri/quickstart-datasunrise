@@ -335,7 +335,7 @@
         "DSDictionaryDBName" : {
             "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
             "ConstraintDescription" : "Must begin with a letter and contain only alphanumeric characters",
-            "Description" : "DataSunrise Dictionary is used to store configurations. Must begin with a letter and contain only alphanumeric characters",
+            "Description" : "DataSunrise dictionary is used to store configurations. Must begin with a letter and contain only alphanumeric characters",
             "Default" : "dsdictionary",
             "MaxLength" : "63",
             "MinLength" : "1",
@@ -572,35 +572,35 @@
             "AllowedPattern" : "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
             "ConstraintDescription" : "CIDR block parameter must be in the form x.x.x.x/16-28",
             "Default" : "10.0.0.0/16",
-            "Description" : "CIDR Block for the VPC",
+            "Description" : "CIDR block for the VPC",
             "Type" : "String"
        },        
         "VPCPrivateSubnet1CIDR" : {
             "AllowedPattern" : "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
             "ConstraintDescription" : "CIDR block parameter must be in the form x.x.x.x/16-28",
             "Default" : "10.0.0.0/19",
-            "Description" : "CIDR block for private subnet 1 located in availability zone 1",
+            "Description" : "CIDR block for private subnet 1 located in Availability Zone 1",
             "Type" : "String"
         },
         "VPCPrivateSubnet2CIDR" : {
             "AllowedPattern" : "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
             "ConstraintDescription" : "CIDR block parameter must be in the form x.x.x.x/16-28",
             "Default" : "10.0.32.0/19",
-            "Description" : "CIDR block for private subnet 1 located in availability zone 2",
+            "Description" : "CIDR block for private subnet 1 located in Availability Zone 2",
             "Type" : "String"
         },
         "VPCPublicSubnet1CIDR" : {
             "AllowedPattern" : "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
             "ConstraintDescription" : "CIDR block parameter must be in the form x.x.x.x/16-28",
             "Default" : "10.0.128.0/20",
-            "Description" : "CIDR Block for the public DMZ subnet 1 located in availability zone 1",
+            "Description" : "CIDR Block for the public DMZ subnet 1 located in Availability Zone 1",
             "Type" : "String"
         },
         "VPCPublicSubnet2CIDR" : {
             "AllowedPattern" : "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$",
             "ConstraintDescription" : "CIDR block parameter must be in the form x.x.x.x/16-28",
             "Default" : "10.0.144.0/20",
-            "Description" : "CIDR Block for the public DMZ subnet 2 located in availability zone 2",
+            "Description" : "CIDR Block for the public DMZ subnet 2 located in Availability Zone 2",
             "Type" : "String"
         },
         "VPCRemoteAccessCIDR" : {

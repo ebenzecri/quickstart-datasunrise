@@ -1091,7 +1091,7 @@
                 "Subnets" : [ { "Ref" : "VPCPublicSubnet1ID" } , { "Ref" : "VPCPrivateSubnet2ID" } ],
                 "CrossZone" : true,
                 "ConnectionSettings" : {
-                    "IdleTimeout" : 120
+                    "IdleTimeout" : 240
                 },
                 "Listeners" : [
                     {
