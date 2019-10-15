@@ -271,8 +271,8 @@
         },         
         "DSAdminPassword" : {
             "AllowedPattern" : "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?!._*[@/\\\\\\\"']).*$",
-            "ConstraintDescription" : "Enter alphanumeric password for the master user. The password must contain 8 to 41 printable ASCII characters, excluding: /, \", \\'', \\", 
-            "Description" : "Administrator password. Must contain 8 to 41 printable ASCII characters (excluding: /, \", \\'', \\)",
+            "ConstraintDescription" : "Enter alphanumeric password for the master user. The password must contain 8 to 41 printable ASCII characters, excluding: /, @, \", ', \\", 
+            "Description" : "Administrator password. Must contain 8 to 41 printable ASCII characters (excluding / @ \" ' \\)",
             "MaxLength" : "41",
             "MinLength" : "8",
             "NoEcho" : true,
@@ -431,8 +431,8 @@
         },
         "DSUserPassword" : {
             "AllowedPattern" : "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?!._*[@/\\\\\\\"']).*$",
-            "ConstraintDescription" : "Enter alphanumeric password for the master user. The password must contain 8 to 41 printable ASCII characters, excluding: /, \", \\'', \\", 
-            "Description" : "User password. Must contain 8 to 41 printable ASCII characters (excluding: /, \", \\'', \\)",
+            "ConstraintDescription" : "Enter alphanumeric password for the master user. The password must contain 8 to 41 printable ASCII characters, excluding: /, @, \", ', \\", 
+            "Description" : "User password. Must contain 8 to 41 printable ASCII characters (excluding / @ \" ' \\)",
             "MaxLength" : "41",
             "MinLength" : "6",
             "NoEcho" : true,
@@ -506,7 +506,7 @@
         },
         "RedshiftMasterUserPassword" : {
             "AllowedPattern" : "(?=^.{6,255}$)((?=.*\\\\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\\\\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\\\\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*",
-            "ConstraintDescription" : "Enter alphanumeric password for the master user. The password must contain 8 to 64 printable ASCII characters,Must have at least 8 characters and no more than 64 characters, and must include 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol (excluding / @ \" ')", 
+            "ConstraintDescription" : "Enter alphanumeric password for the master user. The password must contain 8 to 64 printable ASCII characters. Must have at least 8 characters and no more than 64 characters, and must include 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol (excluding / @ \" ')", 
             "Description" : "User password associated to the master user account for the cluster to be deployed. Must have at least 8 characters and no more than 64 characters, and must include 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol (excluding / @ \" ')",
             "MinLength" : "8",
             "MaxLength" : "64",
