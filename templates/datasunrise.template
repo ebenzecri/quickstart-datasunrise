@@ -1088,7 +1088,7 @@
             "Properties" : {
                 "Scheme" : "internet-facing",
                 "SecurityGroups" : [{ "Ref" : "dsSecurityGroupPublicLoadBalancer" }],
-                "Subnets" : [ { "Ref" : "VPCPublicSubnet1ID" } , { "Ref" : "VPCPrivateSubnet2ID" } ],
+                "Subnets" : [ { "Ref" : "VPCPublicSubnet1ID" } , { "Ref" : "VPCPublicSubnet2ID" } ],
                 "CrossZone" : true,
                 "ConnectionSettings" : {
                     "IdleTimeout" : 240
