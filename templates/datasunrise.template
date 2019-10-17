@@ -1027,8 +1027,8 @@
                             }                        
                         },
                         "commands" : {
-                            "datasunrise-bootstrap-start" : {
-                                "command" :  "./tmp/datasunrise_bootstrap.sh"
+                            "datasunrise-bootstrap" : {
+                                "command" :  "./tmp/datasunrise_bootstrap.sh ; rm -f /tmp/datasunrise_bootstrap.sh"
                             },
                             "datasunrise-enable-banner" : {
                                 "command" :  "echo -e \"\\n Banner /etc/banner_message\" >> /etc/ssh/sshd_config"
