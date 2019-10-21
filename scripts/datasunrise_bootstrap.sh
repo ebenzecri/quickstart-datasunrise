@@ -20,7 +20,7 @@ INSTALLER_URL="https://update.datasunrise.com/get-last-datasunrise?cloud=aws"
 
 ###[ Functions ]###
 aws_cli_configure() {
-    AWS_REGION=`curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq .region -r`
+    AWS_REGION=`curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region'`
     aws configure set default.region $AWS_REGION
 }
 
@@ -152,7 +152,7 @@ if [ $? != 0 ]; then
     ./executecommand.sh connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login admin -password "$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
     DS_ROLE_JSON="{ \"id\":-1, \"name\":\"AWSUserRole\", \"activeDirectoryPath\":\"\", \"isSpecial\":false, \"permissions\":[[\"objectID\",\"actionIDList\"],[70,[]],[47,[]],[53,[]],[19,[]],[67,[]],[69,[]],[63,[]],[65,[]],[38,[]],[40,[]],[59,[2]],[30,[]],[29,[]],[11,[1,2,5]],[5,[1,2,3,4]],[3,[1,2,3,4]],[4,[1,2,3,4]],[50,[]],[22,[]],[33,[]],[51,[]],[2,[1,2,3,4]],[46,[]],[57,[]],[55,[]],[24,[]],[6,[]],[21,[]],[20,[]],[48,[]],[49,[]],[62,[1,2]],[45,[]],[44,[]],[16,[]],[64,[]],[17,[]],[18,[]],[34,[]],[23,[]],[32,[]],[8,[1,2,3,4]],[15,[]],[58,[]],[12,[]],[37,[]],[54,[]],[7,[1,2,3,4,5]],[27,[]],[28,[]],[56,[]],[66,[]],[26,[]],[61,[]],[25,[]],[9,[1,2,3,4]],[39,[]],[36,[]],[35,[]],[13,[]],[14,[]],[68,[]],[42,[]],[43,[]],[10,[1,2,3,4]],[60,[3,1,2]],[31,[]],[41,[]],[1,[]],[71,[]]] }"    
 	echo -ne "\n *** -----------------------------------------------------------\n Add periodic task for removing stopped servers\n" >> $DATASUNRISE_LOG_SETUP
-	PER_TASK_JSON="{\"id\":-1,\"storePeriodType\":0,\"storePeriodValue\":0,\"name\":\"aws_remove_servers\",\"type\":18,\"lastExecTime\":\"\",\"nextExecTime\":\"\",\"lastSuccessTime\":\"\",\"lastErrorTime\":\"\",\"serverID\":0,\"forceUpdate\":false,\"params\":{},\"frequency\":{\"minutes\":{\"beginDate\":\"2018-09-28 00:00:00\",\"repeatEvery\":10}},\"updateNextExecTime\":true}"
+	PER_TASK_JSON="{\"id\":-1,\"storePeriodType\":0,\"storePeriodValue\":0,\"name\":\"Dead EC2 instances removal\",\"type\":18,\"lastExecTime\":\"\",\"nextExecTime\":\"\",\"lastSuccessTime\":\"\",\"lastErrorTime\":\"\",\"serverID\":0,\"forceUpdate\":false,\"params\":{},\"frequency\":{\"minutes\":{\"beginDate\":\"2018-09-28 00:00:00\",\"repeatEvery\":10}},\"updateNextExecTime\":true}"
 	./executecommand.sh arbitrary -function updatePeriodicTask -jsonContent "$PER_TASK_JSON" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
 	echo -ne "\n *** -----------------------------------------------------------\n Role JSON\n$DS_ROLE_JSON\n" >> $DATASUNRISE_LOG_SETUP
     DS_ROLE_ID=`./executecommand.sh arbitrary -function updateAccessRole -jsonContent "$DS_ROLE_JSON" | python -c "import sys, json; print json.load(sys.stdin)['id']"`
