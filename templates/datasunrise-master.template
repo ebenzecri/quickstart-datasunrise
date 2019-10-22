@@ -360,7 +360,8 @@
         },
         "DSClusterLicense" : {
             "Default" : "",
-            "Description" : "License string",
+            "Description" : "License string. If you don't have a license key, please go to: https://www.datasunrise.com/activation-key/?Type=AWS&Os=linux",
+            "MinLength" : "1",
             "Type" : "String"
         },
         "DSClusterMaximumSize" : {
