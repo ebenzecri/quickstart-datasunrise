@@ -6,6 +6,7 @@ AWS_STACK_NAME="$CFUD_AWS_STACK_NAME"
 
 DATASUNRISE_DBINSTANCE_NAME="DSI-$CFUD_AWS_STACK_NAME"
 DATASUNRISE_PATH="/opt/datasunrise/"
+DATASUNRISE_CLI_FILE_NAME="${DATASUNRISE_PATH}cmdline/executecommand.sh"
 DATASUNRISE_LICENSE_FILE_NAME="appfirewall.reg"
 DATASUNRISE_LOG_SETUP="/tmp/setup.log"
 DATASUNRISE_SERVER_HOST=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
@@ -133,50 +134,46 @@ installer_install() {
 }
 
 installer_postinstall() {
-cd /opt/datasunrise/cmdline
-chmod +x executecommand.sh
-echo -ne "\n *** -----------------------------------------------------------\n Attempting to connect as non-admin user\n" >> $DATASUNRISE_LOG_SETUP
-./executecommand.sh connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login "$DS_USER" -password "$DS_USER_PASSWD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
-#if we can't connect as user, then it is first server in configuration
-if [ $? != 0 ]; then
-    echo -ne "\n *** -----------------------------------------------------------\n Non-admin user does not exist. Setup NEW node\n" >> $DATASUNRISE_LOG_SETUP
-    cd /opt/datasunrise/
-    export AF_HOME=`pwd`
-    export AF_CONFIG=`pwd`
-    ./AppBackendService SET_ADMIN_PASSWORD="$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
-    echo -ne "\n *** -----------------------------------------------------------\n Apply ADMIN password : $?\n" >> $DATASUNRISE_LOG_SETUP
+    sudo chmod +x $DATASUNRISE_CLI_FILE_NAME
+    echo -ne "\n *** -----------------------------------------------------------\n Attempting to connect as non-admin user\n" >> $DATASUNRISE_LOG_SETUP
+    $DATASUNRISE_CLI_FILE_NAME connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login "$DS_USER" -password "$DS_USER_PASSWD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+
+    # If the connection can't be established as a regular user, that means this is the first server of the cluster
+    if [ $? != 0 ]; then
+        echo -ne "\n *** -----------------------------------------------------------\n Non-admin user does not exist. Setup NEW node\n" >> $DATASUNRISE_LOG_SETUP
+        export AF_HOME=$DATASUNRISE_PATH
+        export AF_CONFIG=$DATASUNRISE_PATH
+        ${DATASUNRISE_PATH}AppBackendService SET_ADMIN_PASSWORD="$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        echo -ne "\n *** -----------------------------------------------------------\n Apply ADMIN password : $?\n" >> $DATASUNRISE_LOG_SETUP
+        echo -ne "\n *** -----------------------------------------------------------\n Restarting DataSunrise\n" >> $DATASUNRISE_LOG_SETUP
+        sudo service datasunrise restart 2>> $INSTALLER_LOG_INSTALL >> $INSTALLER_LOG_INSTALL
+        sleep 60
+        $DATASUNRISE_CLI_FILE_NAME connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login admin -password "$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        DS_ROLE_JSON="{ \"id\":-1, \"name\":\"AWSUserRole\", \"activeDirectoryPath\":\"\", \"isSpecial\":false, \"permissions\":[[\"objectID\",\"actionIDList\"],[70,[]],[47,[]],[53,[]],[19,[]],[67,[]],[69,[]],[63,[]],[65,[]],[38,[]],[40,[]],[59,[2]],[30,[]],[29,[]],[11,[1,2,5]],[5,[1,2,3,4]],[3,[1,2,3,4]],[4,[1,2,3,4]],[50,[]],[22,[]],[33,[]],[51,[]],[2,[1,2,3,4]],[46,[]],[57,[]],[55,[]],[24,[]],[6,[]],[21,[]],[20,[]],[48,[]],[49,[]],[62,[1,2]],[45,[]],[44,[]],[16,[]],[64,[]],[17,[]],[18,[]],[34,[]],[23,[]],[32,[]],[8,[1,2,3,4]],[15,[]],[58,[]],[12,[]],[37,[]],[54,[]],[7,[1,2,3,4,5]],[27,[]],[28,[]],[56,[]],[66,[]],[26,[]],[61,[]],[25,[]],[9,[1,2,3,4]],[39,[]],[36,[]],[35,[]],[13,[]],[14,[]],[68,[]],[42,[]],[43,[]],[10,[1,2,3,4]],[60,[3,1,2]],[31,[]],[41,[]],[1,[]],[71,[]]] }"    
+        echo -ne "\n *** -----------------------------------------------------------\n Add periodic task for removing stopped servers\n" >> $DATASUNRISE_LOG_SETUP
+	    PER_TASK_JSON="{\"id\":-1,\"storePeriodType\":0,\"storePeriodValue\":0,\"name\":\"Dead EC2 instances removal\",\"type\":18,\"lastExecTime\":\"\",\"nextExecTime\":\"\",\"lastSuccessTime\":\"\",\"lastErrorTime\":\"\",\"serverID\":0,\"forceUpdate\":false,\"params\":{},\"frequency\":{\"minutes\":{\"beginDate\":\"2018-09-28 00:00:00\",\"repeatEvery\":10}},\"updateNextExecTime\":true}"
+	    $DATASUNRISE_CLI_FILE_NAME arbitrary -function updatePeriodicTask -jsonContent "$PER_TASK_JSON" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        echo -ne "\n *** -----------------------------------------------------------\n Role JSON\n$DS_ROLE_JSON\n" >> $DATASUNRISE_LOG_SETUP
+        DS_ROLE_ID=`$DATASUNRISE_CLI_FILE_NAME arbitrary -function updateAccessRole -jsonContent "$DS_ROLE_JSON" | python -c "import sys, json; print json.load(sys.stdin)['id']"`
+        DS_USER_JSON="{ \"id\":-1, \"login\":\"$DS_USER\", \"email\":\"$DS_USER_EMAIL\", \"roles\":[$DS_ROLE_ID], \"activeDirectoryAuth\":false, \"passwordHash\":\"$DS_USER_PASSWD_HASH\" }"
+        echo -ne "\n *** -----------------------------------------------------------\n User JSON\n$DS_USER_JSON\n" >> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME arbitrary -function updateUser -jsonContent "$DS_USER_JSON" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        echo -ne "\n *** -----------------------------------------------------------\n Add instance '$DATASUNRISE_DBINSTANCE_NAME'\n" >> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME addInstancePlus -name "$DATASUNRISE_DBINSTANCE_NAME" -dbType "$DS_DBPROTECTED_TYPE" -dbHost "$DS_DBPROTECTED_ADDRESS" -dbPort "$DS_DBPROTECTED_PORT" -database "$DS_DBPROTECTED_NAME" -login "$DS_DBPROTECTED_USERNAME" -password "$DS_DBPROTECTED_PASSWORD" -proxyHost 0.0.0.0 -proxyPort "$DS_DBPROTECTED_PORT" -savePassword ds 2>> $DATASUNRISE_LOG_SETUP
+        echo -ne "\n *** -----------------------------------------------------------\n Add DDL audit rule\n" >> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME addRule -action audit -name AuditRuleAdmin -logData true -filterType ddl -ddlSelectAll true -dbType "$DS_DBPROTECTED_TYPE" 2>> $DATASUNRISE_LOG_SETUP
+        echo -ne "\n *** -----------------------------------------------------------\n Add DML audit rule\n" >> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME addRule -action audit -name AuditRuleDML -logData true -dbType "$DS_DBPROTECTED_TYPE" 2>> $DATASUNRISE_LOG_SETUP
+    fi
+
+    # Additional settings
+    echo -ne "\n *** -----------------------------------------------------------\n Setup additional settings\n" >> $DATASUNRISE_LOG_SETUP
+    $DATASUNRISE_CLI_FILE_NAME connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login "$DS_ADMIN_USER" -password "$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+    $DATASUNRISE_CLI_FILE_NAME changeParameter -name WebLoadBalancerEnabled -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+    $DATASUNRISE_CLI_FILE_NAME disConnect -f 2>> $DATASUNRISE_LOG_SETUP
     echo -ne "\n *** -----------------------------------------------------------\n Restarting DataSunrise\n" >> $DATASUNRISE_LOG_SETUP
     sudo service datasunrise restart 2>> $INSTALLER_LOG_INSTALL >> $INSTALLER_LOG_INSTALL
-    sleep 60
-    cd /opt/datasunrise/cmdline
-    ./executecommand.sh connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login admin -password "$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
-    DS_ROLE_JSON="{ \"id\":-1, \"name\":\"AWSUserRole\", \"activeDirectoryPath\":\"\", \"isSpecial\":false, \"permissions\":[[\"objectID\",\"actionIDList\"],[70,[]],[47,[]],[53,[]],[19,[]],[67,[]],[69,[]],[63,[]],[65,[]],[38,[]],[40,[]],[59,[2]],[30,[]],[29,[]],[11,[1,2,5]],[5,[1,2,3,4]],[3,[1,2,3,4]],[4,[1,2,3,4]],[50,[]],[22,[]],[33,[]],[51,[]],[2,[1,2,3,4]],[46,[]],[57,[]],[55,[]],[24,[]],[6,[]],[21,[]],[20,[]],[48,[]],[49,[]],[62,[1,2]],[45,[]],[44,[]],[16,[]],[64,[]],[17,[]],[18,[]],[34,[]],[23,[]],[32,[]],[8,[1,2,3,4]],[15,[]],[58,[]],[12,[]],[37,[]],[54,[]],[7,[1,2,3,4,5]],[27,[]],[28,[]],[56,[]],[66,[]],[26,[]],[61,[]],[25,[]],[9,[1,2,3,4]],[39,[]],[36,[]],[35,[]],[13,[]],[14,[]],[68,[]],[42,[]],[43,[]],[10,[1,2,3,4]],[60,[3,1,2]],[31,[]],[41,[]],[1,[]],[71,[]]] }"    
-	echo -ne "\n *** -----------------------------------------------------------\n Add periodic task for removing stopped servers\n" >> $DATASUNRISE_LOG_SETUP
-	PER_TASK_JSON="{\"id\":-1,\"storePeriodType\":0,\"storePeriodValue\":0,\"name\":\"Dead EC2 instances removal\",\"type\":18,\"lastExecTime\":\"\",\"nextExecTime\":\"\",\"lastSuccessTime\":\"\",\"lastErrorTime\":\"\",\"serverID\":0,\"forceUpdate\":false,\"params\":{},\"frequency\":{\"minutes\":{\"beginDate\":\"2018-09-28 00:00:00\",\"repeatEvery\":10}},\"updateNextExecTime\":true}"
-	./executecommand.sh arbitrary -function updatePeriodicTask -jsonContent "$PER_TASK_JSON" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
-	echo -ne "\n *** -----------------------------------------------------------\n Role JSON\n$DS_ROLE_JSON\n" >> $DATASUNRISE_LOG_SETUP
-    DS_ROLE_ID=`./executecommand.sh arbitrary -function updateAccessRole -jsonContent "$DS_ROLE_JSON" | python -c "import sys, json; print json.load(sys.stdin)['id']"`
-    DS_USER_JSON="{ \"id\":-1, \"login\":\"$DS_USER\", \"email\":\"$DS_USER_EMAIL\", \"roles\":[$DS_ROLE_ID], \"activeDirectoryAuth\":false, \"passwordHash\":\"$DS_USER_PASSWD_HASH\" }"
-    echo -ne "\n *** -----------------------------------------------------------\n User JSON\n$DS_USER_JSON\n" >> $DATASUNRISE_LOG_SETUP
-    ./executecommand.sh arbitrary -function updateUser -jsonContent "$DS_USER_JSON" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
-    echo -ne "\n *** -----------------------------------------------------------\n Add instance '$DATASUNRISE_DBINSTANCE_NAME'\n" >> $DATASUNRISE_LOG_SETUP
-    ./executecommand.sh addInstancePlus -name "$DATASUNRISE_DBINSTANCE_NAME" -dbType "$DS_DBPROTECTED_TYPE" -dbHost "$DS_DBPROTECTED_ADDRESS" -dbPort "$DS_DBPROTECTED_PORT" -database "$DS_DBPROTECTED_NAME" -login "$DS_DBPROTECTED_USERNAME" -password "$DS_DBPROTECTED_PASSWORD" -proxyHost 0.0.0.0 -proxyPort "$DS_DBPROTECTED_PORT" -savePassword ds 2>> $DATASUNRISE_LOG_SETUP
-    echo -ne "\n *** -----------------------------------------------------------\n Add DDL audit rule\n" >> $DATASUNRISE_LOG_SETUP
-    ./executecommand.sh addRule -action audit -name AuditRuleAdmin -logData true -filterType ddl -ddlSelectAll true -dbType "$DS_DBPROTECTED_TYPE" 2>> $DATASUNRISE_LOG_SETUP
-    echo -ne "\n *** -----------------------------------------------------------\n Add DML audit rule\n" >> $DATASUNRISE_LOG_SETUP
-    ./executecommand.sh addRule -action audit -name AuditRuleDML -logData true -dbType "$DS_DBPROTECTED_TYPE" 2>> $DATASUNRISE_LOG_SETUP
-fi
-
-# Additional settings
-echo -ne "\n *** -----------------------------------------------------------\n Setup additional settings\n" >> $DATASUNRISE_LOG_SETUP
-cd /opt/datasunrise/cmdline
-./executecommand.sh connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login "$DS_ADMIN_USER" -password "$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
-./executecommand.sh changeParameter -name WebLoadBalancerEnabled -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
-./executecommand.sh disConnect -f 2>> $DATASUNRISE_LOG_SETUP
-
-echo -ne "\n *** -----------------------------------------------------------\n Restarting DataSunrise\n" >> $DATASUNRISE_LOG_SETUP
-sudo service datasunrise restart 2>> $INSTALLER_LOG_INSTALL >> $INSTALLER_LOG_INSTALL
-echo -ne "\n *** -----------------------------------------------------------\n Done!\n\n" >> $DATASUNRISE_LOG_SETUP
+    echo -ne "\n *** -----------------------------------------------------------\n Done!\n\n" >> $DATASUNRISE_LOG_SETUP
 }
 
 installer_preinstall() {
