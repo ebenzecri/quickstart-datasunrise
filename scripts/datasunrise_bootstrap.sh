@@ -170,6 +170,7 @@ installer_postinstall() {
     echo -ne "\n *** -----------------------------------------------------------\n Setup additional settings\n" >> $DATASUNRISE_LOG_SETUP
     $DATASUNRISE_CLI_FILE_NAME connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login "$DS_ADMIN_USER" -password "$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
     $DATASUNRISE_CLI_FILE_NAME changeParameter -name WebLoadBalancerEnabled -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+    $DATASUNRISE_CLI_FILE_NAME changeParameter -name EnableAWSMetrics -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
     $DATASUNRISE_CLI_FILE_NAME disConnect -f 2>> $DATASUNRISE_LOG_SETUP
     echo -ne "\n *** -----------------------------------------------------------\n Restarting DataSunrise\n" >> $DATASUNRISE_LOG_SETUP
     sudo service datasunrise restart 2>> $INSTALLER_LOG_INSTALL >> $INSTALLER_LOG_INSTALL

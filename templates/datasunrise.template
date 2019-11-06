@@ -957,14 +957,14 @@
                             "Effect" : "Allow"
                         },
                         {
-                            "Action" : [ "ec2:AssociateAddress" , "ec2:DescribeInstances" , "ec2:DescribeInstancesStatus" ],
+                            "Action" : [ "cloudwatch:PutMetricData", "ec2:AssociateAddress" , "ec2:DescribeInstances" , "ec2:DescribeInstancesStatus" , "ec2:DescribeTags" ],
                             "Resource" : "*",
                             "Effect" : "Allow"
                         },
                         {
-                            "Effect" : "Allow",
                             "Action" : [ "secretsmanager:DescribeSecret" , "secretsmanager:GetSecretValue" , "secretsmanager:PutSecretValue", "secretsmanager:UpdateSecretVersionStage" ],
-                            "Resource" : [ { "Ref" : "dsSecretDBAudit" } , { "Ref" : "dsSecretDBDictionary" } , { "Ref" : "dsSecretLicense" } , { "Ref" : "dsSecretAdminPassword" } , { "Ref" : "dsSecretUserPassword" } , { "Ref" : "awsSecretRedshift"  }] 
+                            "Resource" : [ { "Ref" : "dsSecretDBAudit" } , { "Ref" : "dsSecretDBDictionary" } , { "Ref" : "dsSecretLicense" } , { "Ref" : "dsSecretAdminPassword" } , { "Ref" : "dsSecretUserPassword" } , { "Ref" : "awsSecretRedshift"  }],
+                            "Effect" : "Allow" 
                         }                        
                     ]
                 },
