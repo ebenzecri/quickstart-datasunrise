@@ -586,21 +586,21 @@
     },
     "Mappings" : {      
         "RegionAMI" : {
-            "us-east-1" : { "AMI" : "ami-1853ac65" },
-            "us-east-2" : { "AMI" : "ami-25615740" },
-            "us-west-1" : { "AMI" : "ami-bf5540df" },
-            "us-west-2" : { "AMI" : "ami-d874e0a0" },
-            "ca-central-1" : { "AMI" : "ami-5b55d23f" },
-            "eu-central-1" : { "AMI" : "ami-ac442ac3" },
-            "eu-west-1" : { "AMI" : "ami-3bfab942" },
-            "eu-west-2" : { "AMI" : "ami-dff017b8" },
-            "eu-west-3" : { "AMI" : "ami-4f55e332" },
-            "ap-northeast-1" : { "AMI" : "ami-a77c30c1" },
-            "ap-northeast-2" : { "AMI" : "ami-5e1ab730" },
-            "ap-southeast-1" : { "AMI" : "ami-e2adf99e" },
-            "ap-southeast-2" : { "AMI" : "ami-43874721" },
-            "ap-south-1" : { "AMI" : "ami-7c87d913" },
-            "sa-east-1" : { "AMI" : "ami-5339733f" }
+            "us-east-1" : { "AMI" : "ami-00eb20669e0990cb4" },
+            "us-east-2" : { "AMI" : "ami-0c64dd618a49aeee8" },
+            "us-west-1" : { "AMI" : "ami-0bce08e823ed38bdd" },
+            "us-west-2" : { "AMI" : "ami-08d489468314a58df" },
+            "ca-central-1" : { "AMI" : "ami-04070f04f450607dc" },
+            "eu-central-1" : { "AMI" : "ami-010fae13a16763bb4" },
+            "eu-west-1" : { "AMI" : "ami-028188d9b49b32a80" },
+            "eu-west-2" : { "AMI" : "ami-04de2b60dd25fbb2e" },
+            "eu-west-3" : { "AMI" : "ami-0652eb0db9b20aeaf" },
+            "ap-northeast-1" : { "AMI" : "ami-0ab3e16f9c414dee7" },
+            "ap-northeast-2" : { "AMI" : "ami-0e1e385b0a934254a" },
+            "ap-southeast-1" : { "AMI" : "ami-05c859630889c79c8" },
+            "ap-southeast-2" : { "AMI" : "ami-07cc15c3ba6f8e287" },
+            "ap-south-1" : { "AMI" : "ami-02913db388613c3e1" },
+            "sa-east-1" : { "AMI" : "ami-0e2c2c29d8017dd99" }
         }
     },
     "Conditions" : {
@@ -985,7 +985,7 @@
             "DependsOn" : [ "dsSecretAttachmentDBAudit" , "dsSecretAttachmentDBDictionary" , "dsSecretLicense" , "dsSecretAdminPassword" , "dsSecretUserPassword" , "awsSecretRedshift" ],
             "Metadata" : {
                 "AWS::CloudFormation::Authentication" : {
-                    "S3AccessClusterMember" : {
+                    "S3AccessCreds" : {
                         "type" : "S3",
                         "roleName" : { "Ref" : "dsClusterMemberRole" },
                         "buckets" : { "Ref" : "QSS3BucketName" }
@@ -1008,7 +1008,7 @@
                                 "mode" : "000644",
                                 "owner" : "root",
                                 "group" : "root",
-                                "authentication" : "S3AccessClusterMember"
+                                "authentication" : "S3AccessCreds"
                             },                                                    
                             "/tmp/datasunrise_bootstrap.sh" : {
                                 "source" : {
@@ -1024,7 +1024,7 @@
                                 "mode" : "000550",
                                 "owner" : "root",
                                 "group" : "root",
-                                "authentication" : "S3AccessClusterMember"
+                                "authentication" : "S3AccessCreds"
                             }                        
                         },
                         "commands" : {
@@ -1050,37 +1050,20 @@
                 "UserData" : { "Fn::Base64" : { "Fn::Join" : [ "", [
                     "#!/bin/bash\n",
                     "\n",
-                    "export CFUD_AWS_STACK_NAME=\"",    { "Ref" : "AWS::StackName" }, "\"\n",
+                    "export CFUD_AWS_STACK_NAME=\"",{ "Ref" : "AWS::StackName" }, "\"\n",
                     "export CFUD_AWS_INSTANCE_TYPE=\"", "redshift", "\"\n",                                        
                     "export PATH=$PATH:/usr/local/bin\n",
                     "which pip &> /dev/null\n",
                     "if [ $? -ne 0 ] ; then\n",
                     "    echo \"PIP NOT INSTALLED\"\n",
                     "    [ `which yum` ] && $(yum install -y epel-release; yum install -y python-pip) && echo \"PIP INSTALLED\"\n",
-                    "    [ `which apt-get` ] && apt-get -y update && apt-get -y install python-pip && echo \"PIP INSTALLED\"\n",
-                    "    [ `which zypper` ] && zypper refresh && zypper install -y python-pip && update-alternatives --set easy_install /usr/bin/easy_install-2.7 && echo \"PIP INSTALLED\"\n",
                     "fi\n",
+                    "yum update -y\n",
                     "pip install --upgrade pip &> /dev/null\n",
                     "pip install awscli --ignore-installed six &> /dev/null\n",
                     "easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
-                    "cfn-init -v --stack ",
-                    {
-                        "Ref" : "AWS::StackName"
-                    },
-                    " --resource dsLaunchConfiguration --region ",
-                    {
-                        "Ref" : "AWS::Region"
-                    },
-                    "\n",
-                    "cfn-signal -e $? --stack ",
-                    {
-                        "Ref" : "AWS::StackName"
-                    },
-                    " --resource dsAutoScalingGroup --region ",
-                    {
-                        "Ref" : "AWS::Region"
-                    },
-                    "\n"
+                    "cfn-init -v --stack ",{ "Ref" : "AWS::StackName" }," --resource dsLaunchConfiguration --region ",{ "Ref" : "AWS::Region" },"\n",
+                    "cfn-signal -e $? --stack ",{ "Ref" : "AWS::StackName" }," --resource dsAutoScalingGroup --region ",{ "Ref" : "AWS::Region" },"\n"
                 ] ] } }
             }
         },
