@@ -164,19 +164,18 @@ installer_postinstall() {
         $DATASUNRISE_CLI_FILE_NAME addRule -action audit -name AuditRuleAdmin -logData true -filterType ddl -ddlSelectAll true -dbType "$DS_DBPROTECTED_TYPE" 2>> $DATASUNRISE_LOG_SETUP
         echo -ne "\n *** -----------------------------------------------------------\n Add DML audit rule\n" >> $DATASUNRISE_LOG_SETUP
         $DATASUNRISE_CLI_FILE_NAME addRule -action audit -name AuditRuleDML -logData true -dbType "$DS_DBPROTECTED_TYPE" 2>> $DATASUNRISE_LOG_SETUP
-    fi
 
-    # Additional settings and fine tune
-    echo -ne "\n *** -----------------------------------------------------------\n Setup additional settings\n" >> $DATASUNRISE_LOG_SETUP
-    $DATASUNRISE_CLI_FILE_NAME connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login "$DS_ADMIN_USER" -password "$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
-    $DATASUNRISE_CLI_FILE_NAME changeParameter -name WebLoadBalancerEnabled -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
-    $DATASUNRISE_CLI_FILE_NAME changeParameter -name EnableAWSMetrics -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
-    $DATASUNRISE_CLI_FILE_NAME changeParameter -name MaxBackendMemory -value 10240 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
-    $DATASUNRISE_CLI_FILE_NAME changeParameter -name MaxCoreMemory -value 10240 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        # Additional settings and fine tune
+        echo -ne "\n *** -----------------------------------------------------------\n Setup additional settings\n" >> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME changeParameter -name WebLoadBalancerEnabled -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME changeParameter -name EnableAWSMetrics -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME changeParameter -name MaxBackendMemory -value 10240 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME changeParameter -name MaxCoreMemory -value 10240 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        echo -ne "\n *** -----------------------------------------------------------\n Restarting DataSunrise\n" >> $DATASUNRISE_LOG_SETUP
+        sudo service datasunrise restart 2>> $INSTALLER_LOG_INSTALL >> $INSTALLER_LOG_INSTALL
+        echo -ne "\n *** -----------------------------------------------------------\n Done!\n\n" >> $DATASUNRISE_LOG_SETUP
+    fi
     $DATASUNRISE_CLI_FILE_NAME disConnect -f 2>> $DATASUNRISE_LOG_SETUP
-    echo -ne "\n *** -----------------------------------------------------------\n Restarting DataSunrise\n" >> $DATASUNRISE_LOG_SETUP
-    sudo service datasunrise restart 2>> $INSTALLER_LOG_INSTALL >> $INSTALLER_LOG_INSTALL
-    echo -ne "\n *** -----------------------------------------------------------\n Done!\n\n" >> $DATASUNRISE_LOG_SETUP
 }
 
 installer_preinstall() {
