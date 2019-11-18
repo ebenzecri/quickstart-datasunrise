@@ -129,7 +129,7 @@ installer_install() {
     sudo chown datasunrise:datasunrise ${DATASUNRISE_PATH}${DATASUNRISE_LICENSE_FILE_NAME} 2>> $INSTALLER_LOG_INSTALL
     echo -ne "\n *** -----------------------------------------------------------\n Starting DataSunrise\n" >> $INSTALLER_LOG_INSTALL
     sudo service datasunrise start 2>> $INSTALLER_LOG_INSTALL >> $INSTALLER_LOG_INSTALL
-    sleep 60
+    sleep 30
     echo -ne "\n *** -----------------------------------------------------------\n Instalation done, now look at $DATASUNRISE_LOG_SETUP.\n" >> $INSTALLER_LOG_INSTALL
 }
 
@@ -147,8 +147,8 @@ installer_postinstall() {
         echo -ne "\n *** -----------------------------------------------------------\n Apply ADMIN password : $?\n" >> $DATASUNRISE_LOG_SETUP
         echo -ne "\n *** -----------------------------------------------------------\n Restarting DataSunrise\n" >> $DATASUNRISE_LOG_SETUP
         sudo service datasunrise restart 2>> $INSTALLER_LOG_INSTALL >> $INSTALLER_LOG_INSTALL
-        sleep 60
-        $DATASUNRISE_CLI_FILE_NAME connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login admin -password "$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        sleep 30
+        $DATASUNRISE_CLI_FILE_NAME connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login "$DS_ADMIN_USER" -password "$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
         DS_ROLE_JSON="{ \"id\":-1, \"name\":\"AWSUserRole\", \"activeDirectoryPath\":\"\", \"isSpecial\":false, \"permissions\":[[\"objectID\",\"actionIDList\"],[70,[]],[47,[]],[53,[]],[19,[]],[67,[]],[69,[]],[63,[]],[65,[]],[38,[]],[40,[]],[59,[2]],[30,[]],[29,[]],[11,[1,2,5]],[5,[1,2,3,4]],[3,[1,2,3,4]],[4,[1,2,3,4]],[50,[]],[22,[]],[33,[]],[51,[]],[2,[1,2,3,4]],[46,[]],[57,[]],[55,[]],[24,[]],[6,[]],[21,[]],[20,[]],[48,[]],[49,[]],[62,[1,2]],[45,[]],[44,[]],[16,[]],[64,[]],[17,[]],[18,[]],[34,[]],[23,[]],[32,[]],[8,[1,2,3,4]],[15,[]],[58,[]],[12,[]],[37,[]],[54,[]],[7,[1,2,3,4,5]],[27,[]],[28,[]],[56,[]],[66,[]],[26,[]],[61,[]],[25,[]],[9,[1,2,3,4]],[39,[]],[36,[]],[35,[]],[13,[]],[14,[]],[68,[]],[42,[]],[43,[]],[10,[1,2,3,4]],[60,[3,1,2]],[31,[]],[41,[]],[1,[]],[71,[]]] }"    
         echo -ne "\n *** -----------------------------------------------------------\n Add periodic task for removing stopped servers\n" >> $DATASUNRISE_LOG_SETUP
 	    PER_TASK_JSON="{\"id\":-1,\"storePeriodType\":0,\"storePeriodValue\":0,\"name\":\"Dead EC2 instances removal\",\"type\":18,\"lastExecTime\":\"\",\"nextExecTime\":\"\",\"lastSuccessTime\":\"\",\"lastErrorTime\":\"\",\"serverID\":0,\"forceUpdate\":false,\"params\":{},\"frequency\":{\"minutes\":{\"beginDate\":\"2018-09-28 00:00:00\",\"repeatEvery\":10}},\"updateNextExecTime\":true}"
@@ -164,21 +164,28 @@ installer_postinstall() {
         $DATASUNRISE_CLI_FILE_NAME addRule -action audit -name AuditRuleAdmin -logData true -filterType ddl -ddlSelectAll true -dbType "$DS_DBPROTECTED_TYPE" 2>> $DATASUNRISE_LOG_SETUP
         echo -ne "\n *** -----------------------------------------------------------\n Add DML audit rule\n" >> $DATASUNRISE_LOG_SETUP
         $DATASUNRISE_CLI_FILE_NAME addRule -action audit -name AuditRuleDML -logData true -dbType "$DS_DBPROTECTED_TYPE" 2>> $DATASUNRISE_LOG_SETUP
-    fi
 
-    # Additional settings
-    echo -ne "\n *** -----------------------------------------------------------\n Setup additional settings\n" >> $DATASUNRISE_LOG_SETUP
-    $DATASUNRISE_CLI_FILE_NAME connect -host 127.0.0.1 -port "$DATASUNRISE_SERVER_PORT" -login "$DS_ADMIN_USER" -password "$DS_ADMIN_PASSWORD" >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
-    $DATASUNRISE_CLI_FILE_NAME changeParameter -name WebLoadBalancerEnabled -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        # Additional settings and fine tune
+        echo -ne "\n *** -----------------------------------------------------------\n Setup additional settings\n" >> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME changeParameter -name WebLoadBalancerEnabled -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME changeParameter -name EnableAWSMetrics -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME changeParameter -name MaxBackendMemory -value 10240 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME changeParameter -name MaxCoreMemory -value 10240 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        echo -ne "\n *** -----------------------------------------------------------\n Restarting DataSunrise\n" >> $DATASUNRISE_LOG_SETUP
+        sudo service datasunrise restart 2>> $INSTALLER_LOG_INSTALL >> $INSTALLER_LOG_INSTALL
+        echo -ne "\n *** -----------------------------------------------------------\n Done!\n\n" >> $DATASUNRISE_LOG_SETUP
+    fi
     $DATASUNRISE_CLI_FILE_NAME disConnect -f 2>> $DATASUNRISE_LOG_SETUP
-    echo -ne "\n *** -----------------------------------------------------------\n Restarting DataSunrise\n" >> $DATASUNRISE_LOG_SETUP
-    sudo service datasunrise restart 2>> $INSTALLER_LOG_INSTALL >> $INSTALLER_LOG_INSTALL
-    echo -ne "\n *** -----------------------------------------------------------\n Done!\n\n" >> $DATASUNRISE_LOG_SETUP
 }
 
 installer_preinstall() {
-    yum update -y
     yum install jq libtool-ltdl unixODBC -y
+    wget -O /tmp/AmazonRedshiftODBC.rpm https://redshift-downloads.s3.amazonaws.com/drivers/odbc/1.4.8.1000/AmazonRedshiftODBC-64-bit-1.4.8.1000-1.x86_64.rpm
+    yum --nogpgcheck localinstall /tmp/AmazonRedshiftODBC.rpm -y
+
+    echo "[Amazon Redshift (x64)]" >> /etc/odbcinst.ini 
+    echo "Description=Amazon Redshift ODBC Driver (64-bit)" >> /etc/odbcinst.ini 
+    echo "Driver=/opt/amazon/redshiftodbc/lib/64/libamazonredshiftodbc64.so" >> /etc/odbcinst.ini 
 }
 
 ###[ Main Script ]###
