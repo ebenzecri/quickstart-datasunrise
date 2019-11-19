@@ -631,7 +631,7 @@
                         "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template",
                         {
                             "QSS3Region" : {
-                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
+                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , { "Fn::Join" : [ "" , [ "s3." , { "Ref" : "AWS::Region" } ] ] } ]
                             }
                         }
                     ]
@@ -657,7 +657,7 @@
                         "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/datasunrise.template",
                         {
                             "QSS3Region" : {
-                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
+                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , { "Fn::Join" : [ "" , [ "s3." , { "Ref" : "AWS::Region" } ] ] } ]
                             }
                         }
                     ]
