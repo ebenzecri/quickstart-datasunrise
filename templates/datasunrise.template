@@ -470,7 +470,7 @@
         "RedshiftEncryptionAtRest" : {
             "AllowedValues" : [ "false", "true" ],
             "Default" : "false",
-            "Description" : "Enable (true) or disable (false) encryption at rest of the Redshift database",
+            "Description" : "Enable (true) or disable (false) encryption at rest of the Amazon Redshift database",
             "Type" : "String"
         },
         "RedshiftGlueCatalogDB" : {
@@ -617,7 +617,7 @@
                         "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion.template",
                         {
                             "QSS3Region" : {
-                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , { "Fn::Join" : [ "" , [ "s3." , { "Ref" : "AWS::Region" } ] ] } ]
+                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
                             }
                         }
                     ]
