@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion" : "2010-09-09",
-    "Description" : "DataSunrise Cluster for Amazon Web Services (+ Linux Bastion + Redshift)",
+    "Description" : "DataSunrise Cluster for Amazon Web Services (+ Linux Bastion + Redshift). (qs-1q77hsjta)",
     "Metadata" : {
         "AWS::CloudFormation::Interface" : {
             "ParameterGroups" : [
