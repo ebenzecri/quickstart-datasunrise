@@ -984,13 +984,6 @@
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
             "DependsOn" : [ "dsSecretAttachmentDBAudit" , "dsSecretAttachmentDBDictionary" , "dsSecretLicense" , "dsSecretAdminPassword" , "dsSecretUserPassword" , "awsSecretRedshift" ],
             "Metadata" : {
-                "AWS::CloudFormation::Authentication" : {
-                    "S3AccessCreds" : {
-                        "type" : "S3",
-                        "roleName" : { "Ref" : "dsClusterMemberRole" },
-                        "buckets" : { "Ref" : "QSS3BucketName" }
-                    }
-                },
                 "AWS::CloudFormation::Init" : {
                     "config" : {
                         "files" : {
@@ -1008,7 +1001,6 @@
                                 "mode" : "000644",
                                 "owner" : "root",
                                 "group" : "root",
-                                "authentication" : "S3AccessCreds"
                             },                                                    
                             "/tmp/datasunrise_bootstrap.sh" : {
                                 "source" : {
@@ -1024,7 +1016,6 @@
                                 "mode" : "000550",
                                 "owner" : "root",
                                 "group" : "root",
-                                "authentication" : "S3AccessCreds"
                             }                        
                         },
                         "commands" : {
