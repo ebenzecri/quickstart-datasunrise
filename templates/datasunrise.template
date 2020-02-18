@@ -1003,7 +1003,7 @@
                                         "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}scripts/banner_message",
                                         {
                                             "QSS3Region" : {
-                                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , { "Fn::Join" : [ "" , [ "s3." , { "Ref" : "AWS::Region" } ] ] } ]
+                                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
                                             }
                                         }
                                     ]                                     
@@ -1019,7 +1019,7 @@
                                         "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}scripts/datasunrise_bootstrap.sh",
                                         {
                                             "QSS3Region" : {
-                                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , { "Fn::Join" : [ "" , [ "s3." , { "Ref" : "AWS::Region" } ] ] } ]
+                                                "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
                                             }
                                         }
                                     ]                                     
