@@ -586,21 +586,24 @@
     },
     "Mappings" : {      
         "RegionAMI" : {
-            "us-east-1" : { "AMI" : "ami-00eb20669e0990cb4" },
-            "us-east-2" : { "AMI" : "ami-0c64dd618a49aeee8" },
-            "us-west-1" : { "AMI" : "ami-0bce08e823ed38bdd" },
-            "us-west-2" : { "AMI" : "ami-08d489468314a58df" },
-            "ca-central-1" : { "AMI" : "ami-04070f04f450607dc" },
-            "eu-central-1" : { "AMI" : "ami-010fae13a16763bb4" },
-            "eu-west-1" : { "AMI" : "ami-028188d9b49b32a80" },
-            "eu-west-2" : { "AMI" : "ami-04de2b60dd25fbb2e" },
-            "eu-west-3" : { "AMI" : "ami-0652eb0db9b20aeaf" },
-            "ap-northeast-1" : { "AMI" : "ami-0ab3e16f9c414dee7" },
-            "ap-northeast-2" : { "AMI" : "ami-0e1e385b0a934254a" },
-            "ap-southeast-1" : { "AMI" : "ami-05c859630889c79c8" },
-            "ap-southeast-2" : { "AMI" : "ami-07cc15c3ba6f8e287" },
-            "ap-south-1" : { "AMI" : "ami-02913db388613c3e1" },
-            "sa-east-1" : { "AMI" : "ami-0e2c2c29d8017dd99" }
+            "us-east-1" : { "AMI" : "ami-062f7200baf2fa504" },
+            "us-east-2" : { "AMI" : "ami-02ccb28830b645a41" },
+            "us-gov-east-1" : { "AMI" : "ami-7c2bc80d" },
+            "us-west-1" : { "AMI" : "ami-03caa3f860895f82e" },
+            "us-west-2" : { "AMI" : "ami-04590e7389a6e577c" },
+            "us-gov-west-1" : { "AMI" : "ami-a03768c1" },
+            "ca-central-1" : { "AMI" : "ami-0a269ca7cc3e3beff" },
+            "eu-central-1" : { "AMI" : "ami-07cda0db070313c52" },
+            "eu-north-1" : {"AMI" : "ami-0662eb9b9b8685935"},
+            "eu-west-1" : { "AMI" : "ami-0713f98de93617bb4" },
+            "eu-west-2" : { "AMI" : "ami-0089b31e09ac3fffc" },
+            "eu-west-3" : { "AMI" : "ami-007fae589fdf6e955" },     
+            "ap-northeast-1" : { "AMI" : "ami-011facbea5ec0363b" },
+            "ap-northeast-2" : { "AMI" : "ami-0bea7fd38fabe821a" },
+            "ap-southeast-1" : { "AMI" : "ami-05c64f7b4062b0a21" },
+            "ap-southeast-2" : { "AMI" : "ami-0b8b10b5bf11f3a22" },
+            "ap-south-1" : { "AMI" : "ami-0217a85e28e625474" },
+            "sa-east-1" : { "AMI" : "ami-09de7b4017733e2af" }
         }
     },
     "Conditions" : {
@@ -623,7 +626,7 @@
                     ]
                 },
                 "Parameters" : {
-                    "BastionAMIOS" : "Amazon-Linux-HVM",
+                    "BastionAMIOS" : "Amazon-Linux2-HVM",
                     "BastionBanner" : {
                         "Fn::Sub" : [
                             "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}scripts/banner_message",
@@ -984,6 +987,13 @@
             "Type" : "AWS::AutoScaling::LaunchConfiguration",
             "DependsOn" : [ "dsSecretAttachmentDBAudit" , "dsSecretAttachmentDBDictionary" , "dsSecretLicense" , "dsSecretAdminPassword" , "dsSecretUserPassword" , "awsSecretRedshift" ],
             "Metadata" : {
+                "AWS::CloudFormation::Authentication" : {
+                    "S3AccessCreds" : {
+                        "type" : "S3",
+                        "roleName" : { "Ref" : "dsClusterMemberRole" },
+                        "buckets" : { "Ref" : "QSS3BucketName" }
+                    }
+                },
                 "AWS::CloudFormation::Init" : {
                     "config" : {
                         "files" : {
@@ -1001,6 +1011,7 @@
                                 "mode" : "000644",
                                 "owner" : "root",
                                 "group" : "root",
+                                "authentication" : "S3AccessCreds"
                             },                                                    
                             "/tmp/datasunrise_bootstrap.sh" : {
                                 "source" : {
@@ -1016,11 +1027,13 @@
                                 "mode" : "000550",
                                 "owner" : "root",
                                 "group" : "root",
+                                "authentication" : "S3AccessCreds"
                             }                        
                         },
                         "commands" : {
                             "datasunrise-bootstrap" : {
-                                "command" :  "./tmp/datasunrise_bootstrap.sh ; rm -f /tmp/datasunrise_bootstrap.sh"
+                                "cwd" : "/tmp/",
+                                "command" :  "./datasunrise_bootstrap.sh ; rm -rf /tmp/datasunrise_bootstrap.sh"
                             },
                             "datasunrise-enable-banner" : {
                                 "command" :  "echo -e \"\\n Banner /etc/banner_message\" >> /etc/ssh/sshd_config"
@@ -1044,17 +1057,26 @@
                     "export CFUD_AWS_STACK_NAME=\"",{ "Ref" : "AWS::StackName" }, "\"\n",
                     "export CFUD_AWS_INSTANCE_TYPE=\"", "redshift", "\"\n",                                        
                     "export PATH=$PATH:/usr/local/bin\n",
-                    "which pip &> /dev/null\n",
-                    "if [ $? -ne 0 ] ; then\n",
-                    "    echo \"PIP NOT INSTALLED\"\n",
-                    "    [ `which yum` ] && $(yum install -y epel-release; yum install -y python-pip) && echo \"PIP INSTALLED\"\n",
-                    "fi\n",
                     "yum update -y\n",
-                    "pip install --upgrade pip &> /dev/null\n",
-                    "pip install awscli --ignore-installed six &> /dev/null\n",
-                    "easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
-                    "cfn-init -v --stack ",{ "Ref" : "AWS::StackName" }," --resource dsLaunchConfiguration --region ",{ "Ref" : "AWS::Region" },"\n",
-                    "cfn-signal -e $? --stack ",{ "Ref" : "AWS::StackName" }," --resource dsAutoScalingGroup --region ",{ "Ref" : "AWS::Region" },"\n"
+                    "yum install git -y\n",
+                    "function cfn_fail\n",
+                    "{\n",
+                    "   cfn-signal -e 1 --stack ",{ "Ref" : "AWS::StackName" }," --region ",{ "Ref" : "AWS::Region" }," --resource dsLaunchConfiguration\n",
+                    "   exit 1\n",
+                    "}\n",
+                    "function cfn_success\n",
+                    "{\n",
+                    "   cfn-signal -e 0 --stack ",{ "Ref" : "AWS::StackName" }," --region ",{ "Ref" : "AWS::Region" }," --resource dsAutoScalingGroup\n",
+                    "   exit 1\n",
+                    "}\n",                    
+                    "until git clone https://github.com/aws-quickstart/quickstart-linux-utilities.git ; do echo \"Retrying\"; done\n",
+                    "cd /quickstart-linux-utilities;\n",
+                    "source quickstart-cfn-tools.source;\n",
+                    "qs_update-os || qs_err;\n",
+                    "#qs_bootstrap_pip || qs_err \" pip bootstrap failed \";\n",
+                    "qs_aws-cfn-bootstrap || qs_err \" cfn bootstrap failed \";\n",
+                    "cfn-init -v --stack ",{ "Ref" : "AWS::StackName" }," --resource dsLaunchConfiguration --region ",{ "Ref" : "AWS::Region" }," || cfn_fail\n",
+                    "[ $(qs_status) == 0 ] && cfn_success || cfn_fail\n"
                 ] ] } }
             }
         },
@@ -1136,7 +1158,7 @@
         },
         "ClusterWebConsole" : {
             "Description" : "DataSunrise Web Console",
-            "Value" : { "Fn::Join" : [ "" , [ "https://" , { "Fn::GetAtt" : [ "dsLoadBalancerPublic" , "DNSName" ] } , ":11000/v2" ] ] }
+            "Value" : { "Fn::Join" : [ "" , [ "https://" , { "Fn::GetAtt" : [ "dsLoadBalancerPublic" , "DNSName" ] } , ":11000" ] ] }
         },
         "LinuxBastionSecurityGroup" : {
             "Description" : "Linux Bastion Security Group",
