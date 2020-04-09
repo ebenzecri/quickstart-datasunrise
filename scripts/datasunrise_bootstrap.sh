@@ -172,6 +172,7 @@ installer_postinstall() {
         $DATASUNRISE_CLI_FILE_NAME changeParameter -name EnableAWSMetrics -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
         $DATASUNRISE_CLI_FILE_NAME changeParameter -name MaxBackendMemory -value 10240 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
         $DATASUNRISE_CLI_FILE_NAME changeParameter -name MaxCoreMemory -value 10240 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME changeParameter -name SetupWizardIsDone -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
         echo -ne "\n *** -----------------------------------------------------------\n Restarting DataSunrise\n" >> $DATASUNRISE_LOG_SETUP
         sudo service datasunrise restart 2>> $INSTALLER_LOG_INSTALL >> $INSTALLER_LOG_INSTALL
         echo -ne "\n *** -----------------------------------------------------------\n Done!\n\n" >> $DATASUNRISE_LOG_SETUP
