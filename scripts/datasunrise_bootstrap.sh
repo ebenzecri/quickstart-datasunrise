@@ -172,6 +172,7 @@ installer_postinstall() {
         $DATASUNRISE_CLI_FILE_NAME changeParameter -name EnableAWSMetrics -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
         $DATASUNRISE_CLI_FILE_NAME changeParameter -name MaxBackendMemory -value 10240 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
         $DATASUNRISE_CLI_FILE_NAME changeParameter -name MaxCoreMemory -value 10240 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
+        $DATASUNRISE_CLI_FILE_NAME changeParameter -name SetupWizardIsDone -value 1 >> $DATASUNRISE_LOG_SETUP 2>> $DATASUNRISE_LOG_SETUP
         echo -ne "\n *** -----------------------------------------------------------\n Restarting DataSunrise\n" >> $DATASUNRISE_LOG_SETUP
         sudo service datasunrise restart 2>> $INSTALLER_LOG_INSTALL >> $INSTALLER_LOG_INSTALL
         echo -ne "\n *** -----------------------------------------------------------\n Done!\n\n" >> $DATASUNRISE_LOG_SETUP
@@ -180,7 +181,7 @@ installer_postinstall() {
 }
 
 installer_preinstall() {
-    yum install jq libtool-ltdl unixODBC -y
+    yum install java jq libtool-ltdl unixODBC -y
     wget -O /tmp/AmazonRedshiftODBC.rpm https://redshift-downloads.s3.amazonaws.com/drivers/odbc/1.4.8.1000/AmazonRedshiftODBC-64-bit-1.4.8.1000-1.x86_64.rpm
     yum --nogpgcheck localinstall /tmp/AmazonRedshiftODBC.rpm -y
 

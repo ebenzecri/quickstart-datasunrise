@@ -1,6 +1,5 @@
-taskcat_outputs/index.html
-taskcat_outputs/tcat-tag-qs-ds-ww-5fc77a90-us-east-1-cfnlogs.txt
-taskcat_outputs/tcat-tag-qs-ds-ww-34ef8b83-us-east-1-cfnlogs.txt
-taskcat_outputs/tcat-tag-qs-ds-ww-44f6af01-us-east-1-cfnlogs.txt
+taskcat_outputs/
 scripts/RemoveRedshiftSnapshots.ps1
 scripts/RemoveRedshiftSnapshots.zip
+.taskcat_overrides.yml
+
