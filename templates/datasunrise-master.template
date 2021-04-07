@@ -628,7 +628,7 @@
             "Properties" : {
                 "TemplateURL" : {
                     "Fn::Sub" : [
-                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template",
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml",
                         {
                             "QSS3Region" : {
                                 "Fn::If" : [ "GovCloudCondition" , "s3-us-gov-west-1" , "s3" ]
@@ -638,7 +638,6 @@
                 },
                 "Parameters" : {
                     "AvailabilityZones" : { "Fn::Join" : [ "," , { "Ref" : "VPCAvailabilityZones" } ] },
-                    "KeyPairName" : { "Ref" : "DSClusterMemberKeyPair" },
                     "NumberOfAZs" : "2",
                     "PrivateSubnet1ACIDR" : { "Ref" : "VPCPrivateSubnet1CIDR" },
                     "PrivateSubnet2ACIDR" : { "Ref" : "VPCPrivateSubnet2CIDR" },
