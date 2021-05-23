@@ -1,3 +1,7 @@
+***
+**Note: This was my first public CloudFormation project. Please, don't use this repository because it won't be updated. Use instead: https://github.com/aws-quickstart/quickstart-datasunrise**
+***
+
 # quickstart-datasunrise
 ## DataSunrise with Amazon Redshift on AWS
 
